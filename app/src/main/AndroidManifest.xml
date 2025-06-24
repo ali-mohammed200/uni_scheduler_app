@@ -13,7 +13,7 @@
         android:theme="@style/Theme.MyTestApplication"
         tools:targetApi="31" >
         <activity
-            android:name=".HomeEmptyActivity"
+            android:name=".HomeActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyTestApplication" >
@@ -22,6 +22,30 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".EmptyActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MyTestApplication" >
+        </activity>
+        <activity
+            android:name=".CoursesActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MyTestApplication" >
+        </activity>
+        <activity
+            android:name=".TermsActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MyTestApplication" >
+        </activity>
+        <activity
+            android:name=".AssessmentsActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MyTestApplication" >
         </activity>
     </application>
 

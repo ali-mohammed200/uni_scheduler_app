@@ -31,6 +31,7 @@ public class TermDAO {
         Cursor cursor = db.query("terms", null, null, null, null, null, null);
 
         while (cursor.moveToNext()) {
+//            TODO: Conver to buildcursor like coursesdao
             Term term = new Term();
             term.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
             term.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));

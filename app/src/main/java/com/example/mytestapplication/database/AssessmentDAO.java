@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.mytestapplication.models.Assessment;
+import com.example.mytestapplication.models.Course;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +34,19 @@ public class AssessmentDAO {
         Cursor cursor = db.query("assessments", null, "course_id = ?", new String[]{String.valueOf(courseId)}, null, null, null);
 
         while (cursor.moveToNext()) {
-            Assessment assessment = new Assessment();
-            assessment.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-            assessment.setCourseId(cursor.getInt(cursor.getColumnIndexOrThrow("course_id")));
-            assessment.setType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
-            assessment.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
-            assessment.setStartDate(cursor.getString(cursor.getColumnIndexOrThrow("start_date")));
-            assessment.setEndDate(cursor.getString(cursor.getColumnIndexOrThrow("end_date")));
-            assessments.add(assessment);
+            assessments.add(buildModelFromCursor(cursor));
+        }
+
+        cursor.close();
+        return assessments;
+    }
+
+    public List<Assessment> getAllAssessments() {
+        List<Assessment> assessments = new ArrayList<>();
+        Cursor cursor = db.query("assessments", null, null, null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            assessments.add(buildModelFromCursor(cursor));
         }
 
         cursor.close();
@@ -58,5 +64,16 @@ public class AssessmentDAO {
         values.put("start_date", assessment.getStartDate());
         values.put("end_date", assessment.getEndDate());
         return db.update("assessments", values, "id = ?", new String[]{String.valueOf(assessment.getId())});
+    }
+
+    private Assessment buildModelFromCursor(Cursor cursor) {
+        Assessment assessment = new Assessment();
+        assessment.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+        assessment.setCourseId(cursor.getInt(cursor.getColumnIndexOrThrow("course_id")));
+        assessment.setType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
+        assessment.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
+        assessment.setStartDate(cursor.getString(cursor.getColumnIndexOrThrow("start_date")));
+        assessment.setEndDate(cursor.getString(cursor.getColumnIndexOrThrow("end_date")));
+        return assessment;
     }
 }
