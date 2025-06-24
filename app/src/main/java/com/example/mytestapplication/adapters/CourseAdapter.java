@@ -50,4 +50,8 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     public int getItemCount() {
         return courses.size();
     }
+
+    public void setCourses(List<Course> newCourses) {
+        this.courses = newCourses;
+    }
 }

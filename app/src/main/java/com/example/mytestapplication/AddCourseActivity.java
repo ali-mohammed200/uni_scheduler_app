@@ -76,6 +76,7 @@ public class AddCourseActivity extends AppCompatActivity {
         long newRowId = db.insert("courses", null, values);
         if (newRowId != -1) {
             Toast.makeText(this, "Course added", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
             finish(); // close activity
         } else {
             Toast.makeText(this, "Failed to add course", Toast.LENGTH_SHORT).show();
