@@ -1,6 +1,9 @@
 package com.example.mytestapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,10 +32,9 @@ public class CoursesActivity extends AppCompatActivity {
         adapter = new CourseAdapter(courses);
         recyclerView.setAdapter(adapter);
     }
+
+    public void addCourse(View view) {
+        Intent intent = new Intent(CoursesActivity.this, AddCourseActivity.class);
+        startActivity(intent);
+    }
 }
-
-
-
-//        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(new TermAdapter(yourTermList)); // or AssessmentAdapter
