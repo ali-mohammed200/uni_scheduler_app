@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -70,6 +71,13 @@ public class DetailTermActivity extends AppCompatActivity {
         List<Course> courses = dao.getCoursesByTermId(termId);
         adapter = new CourseAdapter(courses);
         recyclerView.setAdapter(adapter);
+    }
+
+    public void showDetailCourse(View view) {
+        Course clickedCourse = (Course) view.getTag(); // Retrieve the course from the adapter
+        Intent intent = new Intent(this, DetailCourseActivity.class);
+        intent.putExtra("course", clickedCourse);
+        startActivity(intent);
     }
 
     @Override
