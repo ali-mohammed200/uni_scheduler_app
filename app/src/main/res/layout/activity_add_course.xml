@@ -12,49 +12,57 @@
         <EditText
             android:id="@+id/inputCourseTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Course Title" />
+            android:layout_height="62dp"
+            android:hint="Course Title"
+            android:inputType="text|textAutoComplete" />
 
         <Spinner
             android:id="@+id/spinnerTerms"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
             android:layout_marginTop="8dp" />
 
         <EditText
             android:id="@+id/inputStartDate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Start Date (yyyy-mm-dd)" />
+            android:layout_height="52dp"
+            android:hint="Start Date (yyyy-mm-dd)"
+            android:focusable="false"
+            android:clickable="true" />
 
         <EditText
             android:id="@+id/inputEndDate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="End Date (yyyy-mm-dd)" />
+            android:layout_height="52dp"
+            android:hint="End Date (yyyy-mm-dd)"
+            android:focusable="false"
+            android:clickable="true" />
 
         <Spinner
             android:id="@+id/spinnerStatus"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="48dp" />
 
         <EditText
             android:id="@+id/inputInstructorName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Instructor Name" />
+            android:layout_height="48dp"
+            android:hint="Instructor Name"
+            android:inputType="text|textAutoComplete" />
 
         <EditText
             android:id="@+id/inputInstructorPhone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Instructor Phone" />
+            android:layout_height="48dp"
+            android:hint="Instructor Phone"
+            android:inputType="phone" />
 
         <EditText
             android:id="@+id/inputInstructorEmail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Instructor Email" />
+            android:layout_height="48dp"
+            android:hint="Instructor Email"
+            android:inputType="text|textAutoComplete" />
 
         <EditText
             android:id="@+id/inputNote"

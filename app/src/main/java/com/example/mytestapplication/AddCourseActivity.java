@@ -1,5 +1,6 @@
 package com.example.mytestapplication;
 
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import com.example.mytestapplication.database.DatabaseHelper;
 import com.example.mytestapplication.models.Term;
 import com.example.mytestapplication.database.TermDAO;
 
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -40,6 +42,10 @@ public class AddCourseActivity extends AppCompatActivity {
         noteInput = findViewById(R.id.inputNote);
         statusSpinner = findViewById(R.id.spinnerStatus);
         Button saveButton = findViewById(R.id.buttonSaveCourse);
+
+        startDateInput.setOnClickListener(v -> showDatePickerDialog(startDateInput));
+        endDateInput.setOnClickListener(v -> showDatePickerDialog(endDateInput));
+
 
         termSpinner = findViewById(R.id.spinnerTerms);
 
@@ -70,6 +76,26 @@ public class AddCourseActivity extends AppCompatActivity {
             saveCourse();
         });
     }
+
+    private void showDatePickerDialog(final EditText targetEditText) {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Month is 0-based in Calendar, so add 1
+                    String formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    targetEditText.setText(formattedDate);
+                },
+                year, month, day
+        );
+
+        datePickerDialog.show();
+    }
+
 
     private void saveCourse() {
         String title = titleInput.getText().toString().trim();
