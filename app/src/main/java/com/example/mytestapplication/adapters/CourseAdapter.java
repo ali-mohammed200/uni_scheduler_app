@@ -33,8 +33,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
 
     @Override
     public CourseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.course_list_item, parent, false);
-//        TODO: Remove this line above and the course_list_item.xml
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_course, parent, false);
         return new CourseViewHolder(view);
     }
