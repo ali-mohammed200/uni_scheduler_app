@@ -21,6 +21,9 @@ public class TermsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_terms);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Show Up button
+        getSupportActionBar().setTitle("Terms");
+
         recyclerView = findViewById(R.id.recyclerViewTerms);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -28,5 +31,12 @@ public class TermsActivity extends AppCompatActivity {
         List<Term> terms = dao.getAllTerms();
         adapter = new TermAdapter(terms);
         recyclerView.setAdapter(adapter);
+    }
+
+//    TODO: Remove this Up logic into a base class that inherits this behavior
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

@@ -33,6 +33,9 @@ public class AddCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_course);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Show Up button
+        getSupportActionBar().setTitle("Add Course");
+
         titleInput = findViewById(R.id.inputCourseTitle);
         startDateInput = findViewById(R.id.inputStartDate);
         endDateInput = findViewById(R.id.inputEndDate);
@@ -151,5 +154,11 @@ public class AddCourseActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Failed to add course", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

@@ -28,6 +28,9 @@ public class CoursesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_courses);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Show Up button
+        getSupportActionBar().setTitle("Courses");
+
         recyclerView = findViewById(R.id.recyclerViewCourses);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -53,5 +56,11 @@ public class CoursesActivity extends AppCompatActivity {
     public void addCourse(View view) {
         Intent intent = new Intent(CoursesActivity.this, AddCourseActivity.class);
         addCourseLauncher.launch(intent);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

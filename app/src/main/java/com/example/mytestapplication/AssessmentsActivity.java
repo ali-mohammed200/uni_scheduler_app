@@ -21,6 +21,9 @@ public class AssessmentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assessments);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Show Up button
+        getSupportActionBar().setTitle("Assessments");
+
         recyclerView = findViewById(R.id.recyclerViewAssessments);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -28,5 +31,11 @@ public class AssessmentsActivity extends AppCompatActivity {
         List<Assessment> assessments = dao.getAllAssessments();
         adapter = new AssessmentAdapter(assessments);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
