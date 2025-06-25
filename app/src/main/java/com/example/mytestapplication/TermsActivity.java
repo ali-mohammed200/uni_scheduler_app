@@ -59,7 +59,7 @@ public class TermsActivity extends AppCompatActivity {
         addTermLauncher.launch(intent);
     }
 
-    public void showDetails(View view) {
+    public void showDetailTerm(View view) {
         Term clickedTerm = (Term) view.getTag(); // Retrieve the term from the adapter
         Intent intent = new Intent(this, DetailTermActivity.class);
         intent.putExtra("term", clickedTerm);

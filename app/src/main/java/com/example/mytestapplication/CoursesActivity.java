@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mytestapplication.adapters.CourseAdapter;
 import com.example.mytestapplication.database.CourseDAO;
 import com.example.mytestapplication.models.Course;
+import com.example.mytestapplication.models.Term;
 
 import java.util.List;
 
@@ -58,6 +59,12 @@ public class CoursesActivity extends AppCompatActivity {
         addCourseLauncher.launch(intent);
     }
 
+    public void showDetailCourse(View view) {
+        Course clickedCourse = (Course) view.getTag(); // Retrieve the course from the adapter
+        Intent intent = new Intent(this, DetailCourseActivity.class);
+        intent.putExtra("course", clickedCourse);
+        startActivity(intent);
+    }
     @Override
     public boolean onSupportNavigateUp() {
         finish();

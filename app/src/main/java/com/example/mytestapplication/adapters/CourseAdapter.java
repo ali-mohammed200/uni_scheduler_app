@@ -42,6 +42,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         Course course = courses.get(position);
         holder.titleTextView.setText(course.getTitle());
         holder.instructorTextView.setText(course.getInstructorName());
+        holder.itemView.setTag(course);
     }
 
     @Override
