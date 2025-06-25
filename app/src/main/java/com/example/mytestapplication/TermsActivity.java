@@ -59,6 +59,13 @@ public class TermsActivity extends AppCompatActivity {
         addTermLauncher.launch(intent);
     }
 
+    public void showDetails(View view) {
+        Term clickedTerm = (Term) view.getTag(); // Retrieve the term from the adapter
+        Intent intent = new Intent(this, DetailTermActivity.class);
+        intent.putExtra("term", clickedTerm);
+        startActivity(intent);
+    }
+
 //    TODO: Remove this Up logic into a base class that inherits this behavior
     @Override
     public boolean onSupportNavigateUp() {

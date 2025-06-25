@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -16,7 +17,9 @@ import com.example.mytestapplication.database.DatabaseHelper;
 import com.example.mytestapplication.models.Term;
 import com.example.mytestapplication.database.TermDAO;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -52,9 +55,17 @@ public class AddCourseActivity extends AppCompatActivity {
 
         termSpinner = findViewById(R.id.spinnerTerms);
 
-        // Load terms from database
-        TermDAO termDAO = new TermDAO(this);
-        termList = termDAO.getAllTerms();
+        // Get passed term info
+        Intent intent = getIntent();
+        Term term = (Term) intent.getSerializableExtra("term");
+        if (term != null) {
+            termList = new ArrayList<>(Collections.singletonList(term));
+        } else {
+            // Load terms from database
+            TermDAO termDAO = new TermDAO(this);
+            termList = termDAO.getAllTerms();
+        }
+
 
         // Use ArrayAdapter with toString()
         ArrayAdapter<Term> termAdapter = new ArrayAdapter<>(
@@ -85,7 +96,7 @@ public class AddCourseActivity extends AppCompatActivity {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-
+// TODO: Fix Date format to preferred Mon, day, year - anywhere where date is used
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {

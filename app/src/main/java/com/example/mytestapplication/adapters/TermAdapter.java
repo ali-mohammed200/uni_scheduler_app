@@ -46,6 +46,7 @@ public class TermAdapter extends RecyclerView.Adapter<TermAdapter.TermViewHolder
         Term term = terms.get(position);
         holder.termTitle.setText(term.getTitle());
         holder.termDates.setText(term.getStartDate() + " – " + term.getEndDate());
+        holder.itemView.setTag(term);
     }
 
     @Override

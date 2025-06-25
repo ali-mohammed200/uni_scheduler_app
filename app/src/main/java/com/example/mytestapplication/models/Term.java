@@ -1,6 +1,8 @@
 package com.example.mytestapplication.models;
 
-public class Term {
+import java.io.Serializable;
+
+public class Term implements Serializable {
     private int id;
     private String title;
     private String startDate;
