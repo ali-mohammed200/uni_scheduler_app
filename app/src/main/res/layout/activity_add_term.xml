@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/inputTermTitle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="Term Title"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/inputStartDate"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:hint="Start Date (yyyy-mm-dd)"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <EditText
+            android:id="@+id/inputEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:hint="End Date (yyyy-mm-dd)"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <Button
+            android:id="@+id/buttonSaveTerm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Term"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

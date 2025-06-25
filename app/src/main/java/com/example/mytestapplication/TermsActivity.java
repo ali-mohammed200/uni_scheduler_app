@@ -1,12 +1,19 @@
 package com.example.mytestapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytestapplication.adapters.TermAdapter;
+import com.example.mytestapplication.database.CourseDAO;
 import com.example.mytestapplication.database.TermDAO;
+import com.example.mytestapplication.models.Course;
 import com.example.mytestapplication.models.Term;
 
 import java.util.List;
@@ -15,6 +22,7 @@ public class TermsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private TermAdapter adapter;
+    private ActivityResultLauncher<Intent> addTermLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +39,24 @@ public class TermsActivity extends AppCompatActivity {
         List<Term> terms = dao.getAllTerms();
         adapter = new TermAdapter(terms);
         recyclerView.setAdapter(adapter);
+
+        addTermLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        // Reload updated data
+                        TermDAO updatedDao = new TermDAO(this);
+                        List<Term> updatedTerms = updatedDao.getAllTerms();
+                        adapter.setTerms(updatedTerms);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+        );
+    }
+
+    public void addTerm(View view) {
+        Intent intent = new Intent(TermsActivity.this, AddTermActivity.class);
+        addTermLauncher.launch(intent);
     }
 
 //    TODO: Remove this Up logic into a base class that inherits this behavior

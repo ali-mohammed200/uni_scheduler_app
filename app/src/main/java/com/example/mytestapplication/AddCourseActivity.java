@@ -99,7 +99,7 @@ public class AddCourseActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-
+    //    TODO: Validate start and end dates
     private void saveCourse() {
         String title = titleInput.getText().toString().trim();
         String start = startDateInput.getText().toString().trim();

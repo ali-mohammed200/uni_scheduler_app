@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytestapplication.R;
+import com.example.mytestapplication.models.Course;
 import com.example.mytestapplication.models.Term;
 
 import java.util.List;
@@ -50,5 +51,9 @@ public class TermAdapter extends RecyclerView.Adapter<TermAdapter.TermViewHolder
     @Override
     public int getItemCount() {
         return terms.size();
+    }
+
+    public void setTerms(List<Term> newTerms) {
+        this.terms = newTerms;
     }
 }
