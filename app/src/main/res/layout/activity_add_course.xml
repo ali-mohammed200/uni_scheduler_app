@@ -15,6 +15,12 @@
             android:layout_height="wrap_content"
             android:hint="Course Title" />
 
+        <Spinner
+            android:id="@+id/spinnerTerms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
         <EditText
             android:id="@+id/inputStartDate"
             android:layout_width="match_parent"
