@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,6 +37,7 @@ public class AddCourseActivity extends AppCompatActivity {
 
     private Course course;
     private boolean editMode = false;
+    private Term term;
 
 
     @Override
@@ -63,22 +65,17 @@ public class AddCourseActivity extends AppCompatActivity {
         termSpinner = findViewById(R.id.spinnerTerms);
 
         // Get passed term info
-        Term term = (Term) getIntent().getSerializableExtra("term");
-        course = (Course) getIntent().getSerializableExtra("course");
-        editMode = getIntent().getBooleanExtra("editMode",false);
-        if (term != null) {
-            termList = new ArrayList<>(Collections.singletonList(term));
-        } else if (editMode) {
-            TermDAO termDAO = new TermDAO(this);
+        TermDAO termDAO = new TermDAO(this);
+        term = (Term) getIntent().getSerializableExtra("term"); // From Detail Term
+        course = (Course) getIntent().getSerializableExtra("course"); // From Edit
+        editMode = getIntent().getBooleanExtra("editMode", false);
+
+        if (editMode) {
             term = termDAO.getTermById(course.getTermId());
-// TODO: may need to modify edit if we allow courses to move to different terms
-            termList = new ArrayList<>(Collections.singletonList(term));
-        } else {
-            // Load terms from database
-            TermDAO termDAO = new TermDAO(this);
-            termList = termDAO.getAllTerms();
         }
-//        TODO: You should be able to create a course without a term
+        termDAO = new TermDAO(this);
+        termList = termDAO.getAllTerms();
+
 
 
         // Use ArrayAdapter with toString()
@@ -100,10 +97,25 @@ public class AddCourseActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statusSpinner.setAdapter(adapter);
 
-        if (editMode){
-            int spinnerPosition = adapter.getPosition(course.getStatus());
-//            TODO: term position if allowed
-            prefillForm(spinnerPosition);
+        // when edit, only course is present
+        // when detail term add course, only term is present
+        // we want to fill term if coming from edit or from detail term
+        if (editMode || term != null) {
+            int termPosition = -1; // Need to manually loop since we aren't comparing object identity or we need to overwrite equals/hashcode
+            for (int i = 0; i < termAdapter.getCount(); i++) {
+                Term t = termAdapter.getItem(i);
+                if (t != null && t.getId() == term.getId()) {
+                    termPosition = i;
+                    break;
+                }
+            }
+            if (course == null) {
+                prefillFormTerm(termPosition);
+            } else {
+                int statusPosition = adapter.getPosition(course.getStatus());
+                prefillForm(statusPosition, termPosition);
+            }
+
         }
 
         saveButton.setOnClickListener(v -> {
@@ -130,11 +142,16 @@ public class AddCourseActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    private void prefillForm(Integer position){
+    private void prefillFormTerm(Integer termPosition) {
+        termSpinner.setSelection(termPosition);
+    }
+
+    private void prefillForm(Integer statusPosition, Integer termPosition) {
         titleInput.setText(course.getTitle());
         startDateInput.setText(course.getStartDate());
         endDateInput.setText(course.getEndDate());
-        statusSpinner.setSelection(position);
+        statusSpinner.setSelection(statusPosition);
+        termSpinner.setSelection(termPosition);
         instructorNameInput.setText(course.getInstructorName());
         instructorPhoneInput.setText(course.getInstructorPhone());
         instructorEmailInput.setText(course.getInstructorEmail());
@@ -164,20 +181,19 @@ public class AddCourseActivity extends AppCompatActivity {
 
         // Add simple format validations
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(instructorEmail).matches()) {
-            Toast.makeText(this, "Enter a valid email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Enter a valid format email (e.g., john@wgu.edu)", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!instructorPhone.matches("\\d{3}-\\d{3}-\\d{4}")) {
-            Toast.makeText(this, "Enter a valid phone (e.g., 555-123-4567)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Enter a valid format phone (e.g., 555-123-4567)", Toast.LENGTH_SHORT).show();
             return;
         }
 
         Course new_course;
         CourseDAO dao = new CourseDAO(this);
         long newRowId;
-        if (editMode){
-            // TODO: if allowed to modify term
+        if (editMode) {
             new_course = new Course(course.getId(), selectedTermId, title, start, end, status, instructorName, instructorPhone, instructorEmail, note);
             newRowId = dao.updateCourse(new_course);
         } else {
