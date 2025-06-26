@@ -63,6 +63,7 @@ public class CoursesActivity extends AppCompatActivity {
         Course clickedCourse = (Course) view.getTag(); // Retrieve the course from the adapter
         Intent intent = new Intent(this, DetailCourseActivity.class);
         intent.putExtra("course", clickedCourse);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
     @Override

@@ -65,6 +65,7 @@ public class AddCourseActivity extends AppCompatActivity {
             TermDAO termDAO = new TermDAO(this);
             termList = termDAO.getAllTerms();
         }
+//        TODO: You should be able to create a course without a term
 
 
         // Use ArrayAdapter with toString()
