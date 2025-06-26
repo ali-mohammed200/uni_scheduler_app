@@ -1,14 +1,20 @@
 package com.example.mytestapplication.adapters;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mytestapplication.AddAssessmentActivity;
 import com.example.mytestapplication.R;
+import com.example.mytestapplication.database.AssessmentDAO;
 import com.example.mytestapplication.models.Assessment;
 import com.example.mytestapplication.models.Course;
 
@@ -50,7 +56,55 @@ public class AssessmentAdapter extends RecyclerView.Adapter<AssessmentAdapter.As
         holder.assessmentType.setText("Type: " + assessment.getType());
         holder.assessmentDates.setText("Due: " + assessment.getEndDate());
         holder.itemView.setTag(assessment);
+
+        holder.itemView.setOnLongClickListener(v -> {
+            showPopupMenu(v, assessment);
+            return true;
+        });
     }
+
+    private void showPopupMenu(View anchorView, Assessment assessment) {
+        PopupMenu popupMenu = new PopupMenu(anchorView.getContext(), anchorView);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_card_options, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.menu_edit) {
+                openEditForm(anchorView.getContext(), assessment);
+                return true;
+            } else if (item.getItemId() == R.id.menu_delete) {
+                confirmAndDelete(anchorView.getContext(), assessment);
+                return true;
+            } else {
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void confirmAndDelete(Context context, Assessment assessment) {
+        new AlertDialog.Builder(context)
+                .setTitle("Delete Assessment")
+                .setMessage("Are you sure you want to delete this assessment?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    // Delete from DB
+                    AssessmentDAO dao = new AssessmentDAO(context);
+                    dao.deleteAssessment(assessment.getId());
+
+                    // Update adapter
+                    assessments.remove(assessment);
+                    notifyDataSetChanged();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+
+    private void openEditForm(Context context, Assessment assessment) {
+        Intent intent = new Intent(context, AddAssessmentActivity.class);
+        intent.putExtra("editMode", true);
+        intent.putExtra("assessment", assessment);
+        context.startActivity(intent);
+    }
+
 
     @Override
     public int getItemCount() {

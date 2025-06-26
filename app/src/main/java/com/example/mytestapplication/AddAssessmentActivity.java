@@ -12,7 +12,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mytestapplication.database.AssessmentDAO;
 import com.example.mytestapplication.database.DatabaseHelper;
+import com.example.mytestapplication.models.Assessment;
 import com.example.mytestapplication.models.Course;
 
 import java.util.Calendar;
@@ -23,6 +25,8 @@ public class AddAssessmentActivity extends AppCompatActivity {
     private Spinner typeSpinner;
     private int courseId;
     private Course course;
+    private Assessment assessment;
+    private boolean editMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +43,13 @@ public class AddAssessmentActivity extends AppCompatActivity {
         Button saveButton = findViewById(R.id.buttonSaveAssessment);
 
         course = (Course) getIntent().getSerializableExtra("course");
-        courseId = course.getId();
+        editMode = getIntent().getBooleanExtra("editMode",false);
+        if (editMode){
+            assessment = (Assessment) getIntent().getSerializableExtra("assessment");
+            courseId = assessment.getCourseId();
+        } else {
+            courseId = course.getId();
+        }
         if (courseId == -1) {
             Toast.makeText(this, "Course not found", Toast.LENGTH_SHORT).show();
             finish();
@@ -56,6 +66,11 @@ public class AddAssessmentActivity extends AppCompatActivity {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(adapter);
+
+        if (editMode){
+            int spinnerPosition = adapter.getPosition(assessment.getType());
+            prefillForm(spinnerPosition);
+        }
 
         saveButton.setOnClickListener(v -> saveAssessment());
     }
@@ -78,6 +93,13 @@ public class AddAssessmentActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    private void prefillForm(Integer position){
+        titleInput.setText(assessment.getTitle());
+        startDateInput.setText(assessment.getStartDate());
+        endDateInput.setText(assessment.getEndDate());
+        typeSpinner.setSelection(position);
+    }
+
     private void saveAssessment() {
         String title = titleInput.getText().toString().trim();
         String start = startDateInput.getText().toString().trim();
@@ -89,17 +111,22 @@ public class AddAssessmentActivity extends AppCompatActivity {
             return;
         }
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Assessment new_assessment;
 
-        ContentValues values = new ContentValues();
-        values.put("course_id", courseId);
-        values.put("title", title);
-        values.put("type", type);
-        values.put("start_date", start);
-        values.put("end_date", end);
+        if (editMode){
+            new_assessment = new Assessment(assessment.getId(), assessment.getCourseId(), type, title, start, end);
+        } else {
+            new_assessment = new Assessment(courseId, type, title, start, end);
+        }
 
-        long newRowId = db.insert("assessments", null, values);
+        AssessmentDAO dao = new AssessmentDAO(this);
+        long newRowId;
+        if ( editMode ){
+            newRowId = dao.updateAssessment(new_assessment);
+        } else {
+            newRowId = dao.insertAssessment(new_assessment);
+        }
+
         if (newRowId != -1) {
             Toast.makeText(this, "Assessment added", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
