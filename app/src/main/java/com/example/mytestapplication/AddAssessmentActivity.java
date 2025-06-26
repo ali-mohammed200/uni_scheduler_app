@@ -1,8 +1,12 @@
 package com.example.mytestapplication;
 
+import android.Manifest;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,11 +17,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mytestapplication.database.AssessmentDAO;
-import com.example.mytestapplication.database.DatabaseHelper;
 import com.example.mytestapplication.models.Assessment;
 import com.example.mytestapplication.models.Course;
+import com.example.mytestapplication.notifications.AssessmentsAlertReceiver;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class AddAssessmentActivity extends AppCompatActivity {
 
@@ -35,6 +41,13 @@ public class AddAssessmentActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Add Assessment");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+        }
+
 
         titleInput = findViewById(R.id.inputAssessmentTitle);
         startDateInput = findViewById(R.id.inputAssessmentStartDate);
@@ -123,13 +136,75 @@ public class AddAssessmentActivity extends AppCompatActivity {
         }
 
         if (newRowId != -1) {
+            long oneDay = 24 * 60 * 60 * 1000L;
+            int assessmentId = (int) newRowId;
+
+            scheduleAlert(
+                    "Assessment Reminder",
+                    "Assessment \"" + title + "\" starts tomorrow!",
+                    start,
+                    assessmentId,
+                    -oneDay // 1 day before
+            );
+
+            scheduleAlert(
+                    type + " Assessment Today",
+                    "\"" + title + "\" starts today! (" + start + " - " + end + ")",
+                    start,
+                    assessmentId,
+                    0 // same day (midnight)
+            );
+
+            scheduleAlert(
+                    type + " Assessment Ended",
+                    "Assessment \"" + title + "\" has ended.",
+                    end,
+                    assessmentId,
+                    1000 // 1 second after midnight
+            );
+
+
             Toast.makeText(this, "Assessment added", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
+
+
             finish();
         } else {
             Toast.makeText(this, "Failed to add assessment", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void scheduleAlert(String title, String message, String dateStr, int assessmentId, long offsetMillis) {
+        try {
+//            TODO: Build out boot persistance for notifications
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setLenient(false);
+            Date date = sdf.parse(dateStr);
+            long triggerTime = date.getTime() + offsetMillis;
+//            long triggerTime = System.currentTimeMillis() + offsetMillis; // Uncomment to test, arg 5000 => 5 sec from now
+
+            Intent intent = new Intent(this, AssessmentsAlertReceiver.class);
+            intent.putExtra("title", title);
+            intent.putExtra("message", message);
+            intent.putExtra("assessmentId", assessmentId);
+
+            intent.putExtra("channelId", "assessment_channel");
+            intent.putExtra("channelName", "Assessment Alerts");
+
+            int requestCode = (int) System.currentTimeMillis();
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this, requestCode, intent, PendingIntent.FLAG_IMMUTABLE
+            );
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {

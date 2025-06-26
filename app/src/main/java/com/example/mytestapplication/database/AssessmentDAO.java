@@ -41,6 +41,18 @@ public class AssessmentDAO {
         return assessments;
     }
 
+    public Assessment getAssessmentById(int assessmentId) {
+        Assessment assessment = new Assessment();
+        Cursor cursor = db.query("assessments", null, "id = ?", new String[]{String.valueOf(assessmentId)}, null, null, null);
+
+        while (cursor.moveToNext()) {
+            assessment = buildModelFromCursor(cursor);
+        }
+
+        cursor.close();
+        return assessment;
+    }
+
     public List<Assessment> getAllAssessments() {
         List<Assessment> assessments = new ArrayList<>();
         Cursor cursor = db.query("assessments", null, null, null, null, null, null);

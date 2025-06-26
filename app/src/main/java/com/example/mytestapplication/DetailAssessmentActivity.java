@@ -47,6 +47,12 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         Intent intent = getIntent();
         assessment = (Assessment) intent.getSerializableExtra("assessment");
 
+        int assessmentId = intent.getIntExtra("assessmentId", -1);
+        if (assessmentId != -1) {
+            AssessmentDAO dao = new AssessmentDAO(this);
+            assessment = dao.getAssessmentById(assessmentId);
+        }
+
         textAssessmentTitle.setText("Title: " + assessment.getTitle());
         assessmentDates.setText(assessment.getStartDate() + " - " + assessment.getEndDate());
         assessmentType.setText("Type: " + assessment.getType());
