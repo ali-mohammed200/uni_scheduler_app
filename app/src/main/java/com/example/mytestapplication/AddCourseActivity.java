@@ -1,9 +1,14 @@
 package com.example.mytestapplication;
 
+import android.Manifest;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -21,10 +26,14 @@ import com.example.mytestapplication.models.Assessment;
 import com.example.mytestapplication.models.Course;
 import com.example.mytestapplication.models.Term;
 import com.example.mytestapplication.database.TermDAO;
+import com.example.mytestapplication.notifications.AssessmentsAlertReceiver;
+import com.example.mytestapplication.notifications.CoursesAlertReceiver;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 
@@ -47,6 +56,12 @@ public class AddCourseActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Show Up button
         getSupportActionBar().setTitle("Add Course");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+        }
 
         titleInput = findViewById(R.id.inputCourseTitle);
         startDateInput = findViewById(R.id.inputStartDate);
@@ -204,11 +219,75 @@ public class AddCourseActivity extends AppCompatActivity {
         }
 
         if (newRowId != -1) {
+            long oneDay = 24 * 60 * 60 * 1000L;
+            int courseId = (int) newRowId;
+            if (editMode){
+                courseId  = new_course.getId();
+            }
+
+            Log.d("AddCourseActivity", "DB Transaction Success - newRowId: " + newRowId);
+            Log.d("AddCourseActivity", "DB Transaction Success - courseId: " + courseId);
+
+            scheduleAlert(
+                    "Course Reminder",
+                    "Course \"" + title + "\" starts tomorrow!",
+                    start,
+                    courseId,
+                    -oneDay // 1 day before
+            );
+
+            scheduleAlert(
+                    "Course Today",
+                    "\"" + title + "\" starts today! (" + start + " - " + end + ")",
+                    start,
+                    courseId,
+                    0 // same day (midnight)
+            );
+
+            scheduleAlert(
+                    "Course Ended",
+                    "Course \"" + title + "\" has ended.",
+                    end,
+                    courseId,
+                    1000 // 1 second after midnight
+            );
+
             Toast.makeText(this, "Course added", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
             finish(); // close activity
         } else {
             Toast.makeText(this, "Failed to add course", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void scheduleAlert(String title, String message, String dateStr, int courseId, long offsetMillis) {
+        try {
+//            TODO: Build out boot persistence for notifications
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setLenient(false);
+            Date date = sdf.parse(dateStr);
+            long triggerTime = date.getTime() + offsetMillis;
+//            long triggerTime = System.currentTimeMillis() + offsetMillis; // Uncomment to test, arg 5000 => 5 sec from now
+
+            Intent intent = new Intent(this, CoursesAlertReceiver.class);
+            intent.putExtra("title", title);
+            intent.putExtra("message", message);
+            intent.putExtra("courseId", courseId);
+
+            intent.putExtra("channelId", "course_channel");
+            intent.putExtra("channelName", "Course Alerts");
+
+            int requestCode = (int) System.currentTimeMillis();
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this, requestCode, intent, PendingIntent.FLAG_IMMUTABLE
+            );
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytestapplication.adapters.AssessmentAdapter;
 import com.example.mytestapplication.database.AssessmentDAO;
+import com.example.mytestapplication.database.CourseDAO;
 import com.example.mytestapplication.models.Assessment;
 import com.example.mytestapplication.models.Course;
 
@@ -47,7 +48,12 @@ public class DetailCourseActivity extends AppCompatActivity {
 //         Get course object passed in
         Intent intent = getIntent();
         course = (Course) intent.getSerializableExtra("course");
-//        Log.d("TAG", "This is a debug message MOMO");
+        int courseId = intent.getIntExtra("courseId", -1);
+        Log.d("DetailCourseActivity", "Intent Course Id " + courseId);
+        if (courseId != -1) {
+            CourseDAO dao = new CourseDAO(this);
+            course = dao.getCourseById(courseId);
+        }
 
         courseTitleView.setText("Title: " + course.getTitle());
         startDateView.setText("Start: " + course.getStartDate());
@@ -101,10 +107,6 @@ public class DetailCourseActivity extends AppCompatActivity {
     }
 
     public void addAssessment(View view) {
-//        Intent intent = new Intent(this, AddAssessmentActivity.class);
-//        intent.putExtra("course", course);
-//        startActivity(intent);
-
         Intent addIntent = new Intent(this, AddAssessmentActivity.class);
         addIntent.putExtra("course", course);
         addAssessmentLauncher.launch(addIntent);

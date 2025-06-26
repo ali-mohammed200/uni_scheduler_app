@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -138,6 +139,12 @@ public class AddAssessmentActivity extends AppCompatActivity {
         if (newRowId != -1) {
             long oneDay = 24 * 60 * 60 * 1000L;
             int assessmentId = (int) newRowId;
+            if (editMode){
+                assessmentId  = new_assessment.getId();
+            }
+
+            Log.d("AddAssessmentActivity", "DB Transaction Success - newRowId: " + newRowId);
+            Log.d("AddAssessmentActivity", "DB Transaction Success - assessmentId: " + assessmentId);
 
             scheduleAlert(
                     "Assessment Reminder",
@@ -166,8 +173,6 @@ public class AddAssessmentActivity extends AppCompatActivity {
 
             Toast.makeText(this, "Assessment added", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
-
-
             finish();
         } else {
             Toast.makeText(this, "Failed to add assessment", Toast.LENGTH_SHORT).show();
@@ -176,7 +181,7 @@ public class AddAssessmentActivity extends AppCompatActivity {
 
     private void scheduleAlert(String title, String message, String dateStr, int assessmentId, long offsetMillis) {
         try {
-//            TODO: Build out boot persistance for notifications
+//            TODO: Build out boot persistence for notifications
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             sdf.setLenient(false);
             Date date = sdf.parse(dateStr);

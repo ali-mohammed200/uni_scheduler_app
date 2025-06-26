@@ -11,38 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAO {
-//    private final DatabaseHelper dbHelper;
-
-//    public CourseDAO(Context context) {
-//        dbHelper = new DatabaseHelper(context);
-//    }
-//
-//    public List<Course> getAllCourses() {
-//        List<Course> courses = new ArrayList<>();
-//        SQLiteDatabase db = dbHelper.getReadableDatabase();
-//        Cursor cursor = db.query("courses", null, null, null, null, null, null);
-//
-//        while (cursor.moveToNext()) {
-//            Course course = new Course();
-//            course.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-//            course.setTermId(cursor.getInt(cursor.getColumnIndexOrThrow("term_id")));
-//            course.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
-//            course.setStartDate(cursor.getString(cursor.getColumnIndexOrThrow("start_date")));
-//            course.setEndDate(cursor.getString(cursor.getColumnIndexOrThrow("end_date")));
-//            course.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
-//            course.setInstructorName(cursor.getString(cursor.getColumnIndexOrThrow("instructor_name")));
-//            course.setInstructorPhone(cursor.getString(cursor.getColumnIndexOrThrow("instructor_phone")));
-//            course.setInstructorEmail(cursor.getString(cursor.getColumnIndexOrThrow("instructor_email")));
-//            course.setNote(cursor.getString(cursor.getColumnIndexOrThrow("note")));
-//
-//            courses.add(course);
-//        }
-//
-//        cursor.close();
-//        return courses;
-//    }
-
-
     private SQLiteDatabase db;
 
     public CourseDAO(Context context) {

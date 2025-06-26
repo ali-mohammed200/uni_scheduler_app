@@ -1,21 +1,21 @@
 package com.example.mytestapplication.notifications;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import com.example.mytestapplication.DetailAssessmentActivity;
+import com.example.mytestapplication.DetailCourseActivity;
 import com.example.mytestapplication.R;
 
-public class AssessmentsAlertReceiver extends BroadcastReceiver {
+public class CoursesAlertReceiver extends BroadcastReceiver {
 
     private String channelId;
     private String channelName;
@@ -24,7 +24,7 @@ public class AssessmentsAlertReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra("title");
         String message = intent.getStringExtra("message");
-        int assessmentId = intent.getIntExtra("assessmentId", -1);
+        int courseId = intent.getIntExtra("courseId", -1);
 
         channelId = intent.getStringExtra("channelId");
         channelName = intent.getStringExtra("channelName");
@@ -32,13 +32,13 @@ public class AssessmentsAlertReceiver extends BroadcastReceiver {
         if (channelId == null) channelId = "default_channel";
         if (channelName == null) channelName = "General Notifications";
 
-        Intent notificationIntent = new Intent(context, DetailAssessmentActivity.class);
-        notificationIntent.putExtra("assessmentId", assessmentId); // pass the ID
-        notificationIntent.setData(Uri.parse("custom://assessment/" + assessmentId)); // ensure uniquenes
+        Intent notificationIntent = new Intent(context, DetailCourseActivity.class);
+        notificationIntent.putExtra("courseId", courseId); // pass the ID
+        notificationIntent.setData(Uri.parse("custom://course/" + courseId)); // ensure uniquenes
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                context, assessmentId, notificationIntent,
+                context, courseId, notificationIntent,
                 PendingIntent.FLAG_IMMUTABLE
         );
 
@@ -58,7 +58,7 @@ public class AssessmentsAlertReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-        Log.d("AssessmentsAlertReceiver", "Received alarm: id " + assessmentId + " " + title + " - " + message);
+        Log.d("CoursesAlertReceiver", "Received alarm: id " + courseId + " " + title + " - " + message);
         manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 }

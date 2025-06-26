@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -48,6 +49,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         assessment = (Assessment) intent.getSerializableExtra("assessment");
 
         int assessmentId = intent.getIntExtra("assessmentId", -1);
+        Log.d("DetailAssessment", "assessmentId " + assessmentId);
         if (assessmentId != -1) {
             AssessmentDAO dao = new AssessmentDAO(this);
             assessment = dao.getAssessmentById(assessmentId);
