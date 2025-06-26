@@ -14,8 +14,11 @@ public class CourseDAO {
     private SQLiteDatabase db;
 
     public CourseDAO(Context context) {
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
+        db = DatabaseHelper.getInstance(context).getWritableDatabase();
+    }
+
+    public void close(){
+        db.close();
     }
 
     public long insertCourse(Course course) {

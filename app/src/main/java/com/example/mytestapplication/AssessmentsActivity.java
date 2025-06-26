@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,6 +25,8 @@ public class AssessmentsActivity extends AppCompatActivity {
     private AssessmentAdapter adapter;
     private ActivityResultLauncher<Intent> addAssessmentLauncher;
 
+    private AssessmentDAO dao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +42,7 @@ public class AssessmentsActivity extends AppCompatActivity {
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         // TODO: Move to a method like in detailtermactivity
-                        AssessmentDAO updatedDao = new AssessmentDAO(this);
-                        List<Assessment> updatedAssessments = updatedDao.getAllAssessments();
+                        List<Assessment> updatedAssessments = dao.getAllAssessments();
                         adapter.setAssessments(updatedAssessments);
                         adapter.notifyDataSetChanged();
                     }
@@ -54,11 +56,21 @@ public class AssessmentsActivity extends AppCompatActivity {
         loadAssessments();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
+        }
+    }
+
     private void loadAssessments() {
         recyclerView = findViewById(R.id.recyclerViewAssessments);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        AssessmentDAO dao = new AssessmentDAO(this);
+        dao = new AssessmentDAO(this);
         List<Assessment> assessments = dao.getAllAssessments();
         adapter = new AssessmentAdapter(assessments);
         recyclerView.setAdapter(adapter);

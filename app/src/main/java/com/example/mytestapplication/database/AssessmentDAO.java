@@ -15,8 +15,11 @@ public class AssessmentDAO {
     private SQLiteDatabase db;
 
     public AssessmentDAO(Context context) {
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
+        db = DatabaseHelper.getInstance(context).getWritableDatabase();
+    }
+
+    public void close(){
+        db.close();
     }
 
     public long insertAssessment(Assessment assessment) {

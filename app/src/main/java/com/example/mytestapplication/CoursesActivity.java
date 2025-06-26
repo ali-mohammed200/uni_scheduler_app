@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -22,6 +23,7 @@ public class CoursesActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CourseAdapter adapter;
     private ActivityResultLauncher<Intent> addCourseLauncher;
+    private CourseDAO dao;
 
 
     @Override
@@ -39,8 +41,7 @@ public class CoursesActivity extends AppCompatActivity {
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         // Reload updated data
-                        CourseDAO updatedDao = new CourseDAO(this);
-                        List<Course> updatedCourses = updatedDao.getAllCourses();
+                        List<Course> updatedCourses = dao.getAllCourses();
                         adapter.setCourses(updatedCourses);
                         adapter.notifyDataSetChanged();
                     }
@@ -59,11 +60,21 @@ public class CoursesActivity extends AppCompatActivity {
         loadCourses();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
+        }
+    }
+
     private void loadCourses(){
         recyclerView = findViewById(R.id.recyclerViewCourses);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        CourseDAO dao = new CourseDAO(this);
+        dao = new CourseDAO(this);
         List<Course> courses = dao.getAllCourses();
         adapter = new CourseAdapter(courses);
         recyclerView.setAdapter(adapter);

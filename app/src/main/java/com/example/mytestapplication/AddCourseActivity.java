@@ -47,6 +47,7 @@ public class AddCourseActivity extends AppCompatActivity {
     private Course course;
     private boolean editMode = false;
     private Term term;
+    private CourseDAO dao;
 
 
     @Override
@@ -208,7 +209,7 @@ public class AddCourseActivity extends AppCompatActivity {
         }
 
         Course new_course;
-        CourseDAO dao = new CourseDAO(this);
+        dao = new CourseDAO(this);
         long newRowId;
         if (editMode) {
             new_course = new Course(course.getId(), selectedTermId, title, start, end, status, instructorName, instructorPhone, instructorEmail, note);
@@ -288,6 +289,16 @@ public class AddCourseActivity extends AppCompatActivity {
             );
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
         }
     }
 

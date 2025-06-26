@@ -28,6 +28,7 @@ public class DetailCourseActivity extends AppCompatActivity {
     private AssessmentAdapter adapter;
     private Course course;
     private ActivityResultLauncher<Intent> addAssessmentLauncher;
+    private AssessmentDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,8 @@ public class DetailCourseActivity extends AppCompatActivity {
         int courseId = intent.getIntExtra("courseId", -1);
         Log.d("DetailCourseActivity", "Intent Course Id " + courseId);
         if (courseId != -1) {
-            CourseDAO dao = new CourseDAO(this);
-            course = dao.getCourseById(courseId);
+            CourseDAO courseDAO = new CourseDAO(this);
+            course = courseDAO.getCourseById(courseId);
         }
 
         courseTitleView.setText("Title: " + course.getTitle());
@@ -70,8 +71,7 @@ public class DetailCourseActivity extends AppCompatActivity {
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         // TODO: Move to a method like in detailtermactivity
-                        AssessmentDAO updatedDao = new AssessmentDAO(this);
-                        List<Assessment> updatedAssessments = updatedDao.getAssessmentsByCourseId(course.getId());
+                        List<Assessment> updatedAssessments = dao.getAssessmentsByCourseId(course.getId());
                         adapter.setAssessments(updatedAssessments);
                         adapter.notifyDataSetChanged();
                     }
@@ -85,14 +85,21 @@ public class DetailCourseActivity extends AppCompatActivity {
         loadAssessments();
     }
 
-//    TODO: Fix data cycle issues as you navigate screens.
-//    TODO: This behavior will need to be added to all relevant flows
-//    TODO: Figure out how to remove infinite navigation loop
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
+        }
+    }
+
     private void loadAssessments() {
         recyclerView = findViewById(R.id.recyclerViewAssessments);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        AssessmentDAO dao = new AssessmentDAO(this);
+        dao = new AssessmentDAO(this);
         List<Assessment> assessments = dao.getAssessmentsByCourseId(course.getId());
         adapter = new AssessmentAdapter(assessments);
         recyclerView.setAdapter(adapter);

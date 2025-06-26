@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,6 +25,7 @@ public class DetailTermActivity extends AppCompatActivity {
     private CourseAdapter adapter;
     private int termId;
     private ActivityResultLauncher<Intent> addCourseLauncher;
+    private CourseDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +74,18 @@ public class DetailTermActivity extends AppCompatActivity {
         loadCourses();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
+        }
+    }
+
     private void loadCourses() {
-        CourseDAO dao = new CourseDAO(this);
+        dao = new CourseDAO(this);
         List<Course> courses = dao.getCoursesByTermId(termId);
         adapter = new CourseAdapter(courses);
         recyclerView.setAdapter(adapter);

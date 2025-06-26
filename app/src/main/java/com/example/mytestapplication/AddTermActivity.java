@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ public class AddTermActivity extends AppCompatActivity {
     private EditText titleInput, startDateInput, endDateInput;
     private Term term;
     private boolean editMode = false;
+    private TermDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +89,7 @@ public class AddTermActivity extends AppCompatActivity {
             return;
         }
 
-        TermDAO dao = new TermDAO(this);
+        dao = new TermDAO(this);
         long newRowId;
         Term new_term;
         if (editMode) {
@@ -104,6 +106,16 @@ public class AddTermActivity extends AppCompatActivity {
             finish();
         } else {
             Toast.makeText(this, "Failed to add term", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
         }
     }
 

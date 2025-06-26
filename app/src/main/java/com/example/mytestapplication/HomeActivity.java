@@ -18,10 +18,6 @@ import com.example.mytestapplication.database.DatabaseHelper;
 public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        seedCourses();
-//        seedTerms();
-//        seedAssessments();
-
         CardView coursesCard = findViewById(R.id.coursesCard);
         CardView termsCard = findViewById(R.id.termsCard);
         CardView assessmentsCard = findViewById(R.id.assessmentsCard);

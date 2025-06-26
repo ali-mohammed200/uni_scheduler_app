@@ -34,6 +34,7 @@ public class AddAssessmentActivity extends AppCompatActivity {
     private Course course;
     private Assessment assessment;
     private boolean editMode = false;
+    AssessmentDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +127,7 @@ public class AddAssessmentActivity extends AppCompatActivity {
         }
 
         Assessment new_assessment;
-        AssessmentDAO dao = new AssessmentDAO(this);
+        dao = new AssessmentDAO(this);
         long newRowId;
         if (editMode){
             new_assessment = new Assessment(assessment.getId(), assessment.getCourseId(), type, title, start, end);
@@ -210,6 +211,15 @@ public class AddAssessmentActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
+        }
+    }
 
     @Override
     public boolean onSupportNavigateUp() {

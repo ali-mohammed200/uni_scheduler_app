@@ -14,8 +14,11 @@ public class TermDAO {
     private SQLiteDatabase db;
 
     public TermDAO(Context context) {
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
+        db = DatabaseHelper.getInstance(context).getWritableDatabase();
+    }
+
+    public void close(){
+        db.close();
     }
 
     public long insertTerm(Term term) {

@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -23,6 +24,7 @@ public class TermsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TermAdapter adapter;
     private ActivityResultLauncher<Intent> addTermLauncher;
+    private TermDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +44,7 @@ public class TermsActivity extends AppCompatActivity {
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         // Reload updated data
-                        TermDAO updatedDao = new TermDAO(this);
-                        List<Term> updatedTerms = updatedDao.getAllTerms();
+                        List<Term> updatedTerms = dao.getAllTerms();
                         adapter.setTerms(updatedTerms);
                         adapter.notifyDataSetChanged();
                     }
@@ -62,8 +63,18 @@ public class TermsActivity extends AppCompatActivity {
         loadTerms();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
+        }
+    }
+
     private void loadTerms(){
-        TermDAO dao = new TermDAO(this);
+        dao = new TermDAO(this);
         List<Term> terms = dao.getAllTerms();
         adapter = new TermAdapter(terms);
         recyclerView.setAdapter(adapter);

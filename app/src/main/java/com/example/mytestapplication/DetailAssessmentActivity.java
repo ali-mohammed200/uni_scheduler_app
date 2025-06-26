@@ -30,6 +30,9 @@ public class DetailAssessmentActivity extends AppCompatActivity {
     private CourseAdapter adapter;
     private int courseId;
 
+    private CourseDAO dao;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +54,8 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         int assessmentId = intent.getIntExtra("assessmentId", -1);
         Log.d("DetailAssessment", "assessmentId " + assessmentId);
         if (assessmentId != -1) {
-            AssessmentDAO dao = new AssessmentDAO(this);
-            assessment = dao.getAssessmentById(assessmentId);
+            AssessmentDAO assessmentDAO = new AssessmentDAO(this);
+            assessment = assessmentDAO.getAssessmentById(assessmentId);
         }
 
         textAssessmentTitle.setText("Title: " + assessment.getTitle());
@@ -78,8 +81,18 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         loadCourse();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            dao.close();
+        } catch (NullPointerException e) {
+            Log.d("onDestroy", "NullPointerException - DOA empty");
+        }
+    }
+
     private void loadCourse() {
-        CourseDAO dao = new CourseDAO(this);
+        dao = new CourseDAO(this);
         Course course = dao.getCourseById(courseId);
 
         adapter = new CourseAdapter(new ArrayList<>(List.of(course)));
