@@ -79,7 +79,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     private void confirmAndDelete(Context context, Course course) {
         new AlertDialog.Builder(context)
                 .setTitle("Delete Course")
-                .setMessage("Are you sure you want to delete this course? Notes/Assessments will also be deleted")
+                .setMessage("Are you sure you want to delete this course? Notes & Assessments will also be deleted")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     // Delete from DB
                     CourseDAO dao = new CourseDAO(context);

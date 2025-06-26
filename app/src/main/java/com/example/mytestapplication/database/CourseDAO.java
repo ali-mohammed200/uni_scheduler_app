@@ -132,6 +132,22 @@ public class CourseDAO {
         return courses;
     }
 
+    public int countCoursesByTermId(int termId) {
+        int count = 0;
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM courses WHERE term_id = ?",
+                new String[]{String.valueOf(termId)}
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+            cursor.close();
+        }
+
+        return count;
+    }
+
+
     private Course buildCourseFromCursor(Cursor cursor) {
         Course course = new Course();
         course.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));

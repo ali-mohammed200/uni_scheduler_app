@@ -10,13 +10,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mytestapplication.database.CourseDAO;
 import com.example.mytestapplication.database.DatabaseHelper;
+import com.example.mytestapplication.database.TermDAO;
+import com.example.mytestapplication.models.Course;
+import com.example.mytestapplication.models.Term;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 
 public class AddTermActivity extends AppCompatActivity {
 
     private EditText titleInput, startDateInput, endDateInput;
+    private Term term;
+    private boolean editMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +41,13 @@ public class AddTermActivity extends AppCompatActivity {
 
         startDateInput.setOnClickListener(v -> showDatePickerDialog(startDateInput));
         endDateInput.setOnClickListener(v -> showDatePickerDialog(endDateInput));
+
+        editMode = getIntent().getBooleanExtra("editMode",false);
+        if (editMode) {
+            term = (Term) getIntent().getSerializableExtra("term");
+            prefillForm();
+        }
+
 
         saveButton.setOnClickListener(v -> saveTerm());
     }
@@ -55,6 +70,12 @@ public class AddTermActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    private void prefillForm(){
+        titleInput.setText(term.getTitle());
+        startDateInput.setText(term.getStartDate());
+        endDateInput.setText(term.getEndDate());
+    }
+
 //    TODO: Validate start and end dates
     private void saveTerm() {
         String title = titleInput.getText().toString().trim();
@@ -66,15 +87,17 @@ public class AddTermActivity extends AppCompatActivity {
             return;
         }
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        TermDAO dao = new TermDAO(this);
+        long newRowId;
+        Term new_term;
+        if (editMode) {
+            new_term = new Term(term.getId(), title, start, end);
+            newRowId = dao.updateTerm(new_term);
+        } else {
+            new_term = new Term( title, start, end);
+            newRowId = dao.insertTerm(new_term);
+        }
 
-        ContentValues values = new ContentValues();
-        values.put("title", title);
-        values.put("start_date", start);
-        values.put("end_date", end);
-
-        long newRowId = db.insert("terms", null, values);
         if (newRowId != -1) {
             Toast.makeText(this, "Term added", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);

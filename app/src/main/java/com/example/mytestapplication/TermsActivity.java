@@ -35,6 +35,8 @@ public class TermsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewTerms);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        loadTerms();
+
         addTermLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
