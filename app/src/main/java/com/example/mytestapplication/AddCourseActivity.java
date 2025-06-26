@@ -174,19 +174,14 @@ public class AddCourseActivity extends AppCompatActivity {
         }
 
         Course new_course;
-
+        CourseDAO dao = new CourseDAO(this);
+        long newRowId;
         if (editMode){
             // TODO: if allowed to modify term
             new_course = new Course(course.getId(), selectedTermId, title, start, end, status, instructorName, instructorPhone, instructorEmail, note);
-        } else {
-            new_course = new Course(selectedTermId, title, start, end, status, instructorName, instructorPhone, instructorEmail, note);
-        }
-
-        CourseDAO dao = new CourseDAO(this);
-        long newRowId;
-        if ( editMode ){
             newRowId = dao.updateCourse(new_course);
         } else {
+            new_course = new Course(selectedTermId, title, start, end, status, instructorName, instructorPhone, instructorEmail, note);
             newRowId = dao.insertCourse(new_course);
         }
 

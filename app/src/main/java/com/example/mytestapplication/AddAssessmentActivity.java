@@ -112,18 +112,13 @@ public class AddAssessmentActivity extends AppCompatActivity {
         }
 
         Assessment new_assessment;
-
-        if (editMode){
-            new_assessment = new Assessment(assessment.getId(), assessment.getCourseId(), type, title, start, end);
-        } else {
-            new_assessment = new Assessment(courseId, type, title, start, end);
-        }
-
         AssessmentDAO dao = new AssessmentDAO(this);
         long newRowId;
-        if ( editMode ){
+        if (editMode){
+            new_assessment = new Assessment(assessment.getId(), assessment.getCourseId(), type, title, start, end);
             newRowId = dao.updateAssessment(new_assessment);
         } else {
+            new_assessment = new Assessment(courseId, type, title, start, end);
             newRowId = dao.insertAssessment(new_assessment);
         }
 
