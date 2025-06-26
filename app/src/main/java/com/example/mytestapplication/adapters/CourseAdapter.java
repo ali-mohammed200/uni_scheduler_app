@@ -1,13 +1,22 @@
 package com.example.mytestapplication.adapters;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mytestapplication.AddAssessmentActivity;
+import com.example.mytestapplication.AddCourseActivity;
 import com.example.mytestapplication.R;
+import com.example.mytestapplication.database.AssessmentDAO;
+import com.example.mytestapplication.database.CourseDAO;
+import com.example.mytestapplication.models.Assessment;
 import com.example.mytestapplication.models.Course;
 
 import java.util.List;
@@ -43,6 +52,56 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         holder.titleTextView.setText(course.getTitle());
         holder.instructorTextView.setText(course.getInstructorName());
         holder.itemView.setTag(course);
+
+        holder.itemView.setOnLongClickListener(v -> {
+            showPopupMenu(v, course);
+            return true;
+        });
+    }
+
+    private void showPopupMenu(View anchorView, Course course) {
+        PopupMenu popupMenu = new PopupMenu(anchorView.getContext(), anchorView);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_card_options, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.menu_edit) {
+                openEditForm(anchorView.getContext(), course);
+                return true;
+            } else if (item.getItemId() == R.id.menu_delete) {
+                confirmAndDelete(anchorView.getContext(), course);
+                return true;
+            } else {
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void confirmAndDelete(Context context, Course course) {
+        new AlertDialog.Builder(context)
+                .setTitle("Delete Course")
+                .setMessage("Are you sure you want to delete this course? Notes/Assessments will also be deleted")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    // Delete from DB
+                    CourseDAO dao = new CourseDAO(context);
+                    AssessmentDAO a_dao = new AssessmentDAO(context);
+                    a_dao.deleteAssessmentByCourseId(course.getId());
+                    dao.deleteCourse(course.getId());
+//                   // TODO: Add delete notes
+
+                    // Update adapter
+                    courses.remove(course);
+                    notifyDataSetChanged();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+
+    private void openEditForm(Context context, Course course) {
+        Intent intent = new Intent(context, AddCourseActivity.class);
+        intent.putExtra("editMode", true);
+        intent.putExtra("course", course);
+        context.startActivity(intent);
     }
 
     @Override

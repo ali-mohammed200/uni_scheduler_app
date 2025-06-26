@@ -35,11 +35,6 @@ public class TermsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewTerms);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        TermDAO dao = new TermDAO(this);
-        List<Term> terms = dao.getAllTerms();
-        adapter = new TermAdapter(terms);
-        recyclerView.setAdapter(adapter);
-
         addTermLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -57,6 +52,19 @@ public class TermsActivity extends AppCompatActivity {
     public void addTerm(View view) {
         Intent intent = new Intent(TermsActivity.this, AddTermActivity.class);
         addTermLauncher.launch(intent);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadTerms();
+    }
+
+    private void loadTerms(){
+        TermDAO dao = new TermDAO(this);
+        List<Term> terms = dao.getAllTerms();
+        adapter = new TermAdapter(terms);
+        recyclerView.setAdapter(adapter);
     }
 
     public void showDetailTerm(View view) {

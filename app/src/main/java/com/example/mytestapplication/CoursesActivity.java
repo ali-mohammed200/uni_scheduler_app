@@ -32,13 +32,7 @@ public class CoursesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Show Up button
         getSupportActionBar().setTitle("Courses");
 
-        recyclerView = findViewById(R.id.recyclerViewCourses);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        CourseDAO dao = new CourseDAO(this);
-        List<Course> courses = dao.getAllCourses();
-        adapter = new CourseAdapter(courses);
-        recyclerView.setAdapter(adapter);
+        loadCourses();
 
         addCourseLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -57,6 +51,22 @@ public class CoursesActivity extends AppCompatActivity {
     public void addCourse(View view) {
         Intent intent = new Intent(CoursesActivity.this, AddCourseActivity.class);
         addCourseLauncher.launch(intent);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadCourses();
+    }
+
+    private void loadCourses(){
+        recyclerView = findViewById(R.id.recyclerViewCourses);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        CourseDAO dao = new CourseDAO(this);
+        List<Course> courses = dao.getAllCourses();
+        adapter = new CourseAdapter(courses);
+        recyclerView.setAdapter(adapter);
     }
 
     public void showDetailCourse(View view) {

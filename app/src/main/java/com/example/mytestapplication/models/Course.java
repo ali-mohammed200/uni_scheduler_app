@@ -35,6 +35,20 @@ public class Course implements Serializable {
         this.note = note;
     }
 
+    public Course(int termId, String title, String startDate, String endDate,
+                  String status, String instructorName, String instructorPhone,
+                  String instructorEmail, String note) {
+        this.termId = termId;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+        this.instructorName = instructorName;
+        this.instructorPhone = instructorPhone;
+        this.instructorEmail = instructorEmail;
+        this.note = note;
+    }
+
     // Getters and setters
 
     public int getId() {

@@ -44,6 +44,31 @@ public class TermDAO {
         return terms;
     }
 
+    public Term getTermById(int id) {
+        Term term = null;
+        Cursor cursor = db.query(
+                "terms",
+                null,
+                "id = ?",
+                new String[]{String.valueOf(id)},
+                null,
+                null,
+                null
+        );
+
+        if (cursor.moveToFirst()) {
+            term = new Term();
+            term.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+            term.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
+            term.setStartDate(cursor.getString(cursor.getColumnIndexOrThrow("start_date")));
+            term.setEndDate(cursor.getString(cursor.getColumnIndexOrThrow("end_date")));
+        }
+
+        cursor.close();
+        return term;
+    }
+
+
     public int deleteTerm(int termId) {
         return db.delete("terms", "id = ?", new String[]{String.valueOf(termId)});
     }

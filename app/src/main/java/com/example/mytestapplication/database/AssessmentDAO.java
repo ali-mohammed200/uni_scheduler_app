@@ -57,6 +57,10 @@ public class AssessmentDAO {
         return db.delete("assessments", "id = ?", new String[]{String.valueOf(assessmentId)});
     }
 
+    public int deleteAssessmentByCourseId(int courseId) {
+        return db.delete("assessments", "course_id = ?", new String[]{String.valueOf(courseId)});
+    }
+
     public int updateAssessment(Assessment assessment) {
         ContentValues values = new ContentValues();
         values.put("type", assessment.getType());

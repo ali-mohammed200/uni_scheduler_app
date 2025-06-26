@@ -13,7 +13,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mytestapplication.database.AssessmentDAO;
+import com.example.mytestapplication.database.CourseDAO;
 import com.example.mytestapplication.database.DatabaseHelper;
+import com.example.mytestapplication.models.Assessment;
+import com.example.mytestapplication.models.Course;
 import com.example.mytestapplication.models.Term;
 import com.example.mytestapplication.database.TermDAO;
 
@@ -29,6 +33,9 @@ public class AddCourseActivity extends AppCompatActivity {
             instructorPhoneInput, instructorEmailInput, noteInput;
     private Spinner statusSpinner, termSpinner;
     private List<Term> termList;
+
+    private Course course;
+    private boolean editMode = false;
 
 
     @Override
@@ -56,9 +63,15 @@ public class AddCourseActivity extends AppCompatActivity {
         termSpinner = findViewById(R.id.spinnerTerms);
 
         // Get passed term info
-        Intent intent = getIntent();
-        Term term = (Term) intent.getSerializableExtra("term");
+        Term term = (Term) getIntent().getSerializableExtra("term");
+        course = (Course) getIntent().getSerializableExtra("course");
+        editMode = getIntent().getBooleanExtra("editMode",false);
         if (term != null) {
+            termList = new ArrayList<>(Collections.singletonList(term));
+        } else if (editMode) {
+            TermDAO termDAO = new TermDAO(this);
+            term = termDAO.getTermById(course.getTermId());
+// TODO: may need to modify edit if we allow courses to move to different terms
             termList = new ArrayList<>(Collections.singletonList(term));
         } else {
             // Load terms from database
@@ -87,6 +100,12 @@ public class AddCourseActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statusSpinner.setAdapter(adapter);
 
+        if (editMode){
+            int spinnerPosition = adapter.getPosition(course.getStatus());
+//            TODO: term position if allowed
+            prefillForm(spinnerPosition);
+        }
+
         saveButton.setOnClickListener(v -> {
             saveCourse();
         });
@@ -111,6 +130,17 @@ public class AddCourseActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    private void prefillForm(Integer position){
+        titleInput.setText(course.getTitle());
+        startDateInput.setText(course.getStartDate());
+        endDateInput.setText(course.getEndDate());
+        statusSpinner.setSelection(position);
+        instructorNameInput.setText(course.getInstructorName());
+        instructorPhoneInput.setText(course.getInstructorPhone());
+        instructorEmailInput.setText(course.getInstructorEmail());
+        noteInput.setText(course.getNote());
+    }
+
     //    TODO: Validate start and end dates
     private void saveCourse() {
         String title = titleInput.getText().toString().trim();
@@ -121,6 +151,9 @@ public class AddCourseActivity extends AppCompatActivity {
         String instructorPhone = instructorPhoneInput.getText().toString().trim();
         String instructorEmail = instructorEmailInput.getText().toString().trim();
         String note = noteInput.getText().toString().trim();
+
+        Term selectedTerm = (Term) termSpinner.getSelectedItem();
+        int selectedTermId = selectedTerm.getId();
 
         // Validate required fields
         if (title.isEmpty() || start.isEmpty() || end.isEmpty() ||
@@ -140,25 +173,23 @@ public class AddCourseActivity extends AppCompatActivity {
             return;
         }
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Course new_course;
 
-        ContentValues values = new ContentValues();
+        if (editMode){
+            // TODO: if allowed to modify term
+            new_course = new Course(course.getId(), selectedTermId, title, start, end, status, instructorName, instructorPhone, instructorEmail, note);
+        } else {
+            new_course = new Course(selectedTermId, title, start, end, status, instructorName, instructorPhone, instructorEmail, note);
+        }
 
-        Term selectedTerm = (Term) termSpinner.getSelectedItem();
-        int selectedTermId = selectedTerm.getId();
-        values.put("term_id", selectedTermId);
+        CourseDAO dao = new CourseDAO(this);
+        long newRowId;
+        if ( editMode ){
+            newRowId = dao.updateCourse(new_course);
+        } else {
+            newRowId = dao.insertCourse(new_course);
+        }
 
-        values.put("title", title);
-        values.put("start_date", start);
-        values.put("end_date", end);
-        values.put("status", status);
-        values.put("instructor_name", instructorName);
-        values.put("instructor_phone", instructorPhone);
-        values.put("instructor_email", instructorEmail);
-        values.put("note", note);
-
-        long newRowId = db.insert("courses", null, values);
         if (newRowId != -1) {
             Toast.makeText(this, "Course added", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);

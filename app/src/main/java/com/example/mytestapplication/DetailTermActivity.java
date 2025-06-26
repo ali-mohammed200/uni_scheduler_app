@@ -66,6 +66,12 @@ public class DetailTermActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadCourses();
+    }
+
     private void loadCourses() {
         CourseDAO dao = new CourseDAO(this);
         List<Course> courses = dao.getCoursesByTermId(termId);

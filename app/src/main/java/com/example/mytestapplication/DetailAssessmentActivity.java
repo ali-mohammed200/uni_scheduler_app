@@ -16,6 +16,7 @@ import com.example.mytestapplication.database.CourseDAO;
 import com.example.mytestapplication.models.Assessment;
 import com.example.mytestapplication.models.Course;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,11 +64,17 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadCourse();
+    }
+
     private void loadCourse() {
         CourseDAO dao = new CourseDAO(this);
         Course course = dao.getCourseById(courseId);
 
-        adapter = new CourseAdapter(Collections.singletonList(course));
+        adapter = new CourseAdapter(new ArrayList<>(List.of(course)));
         recyclerView.setAdapter(adapter);
     }
 
