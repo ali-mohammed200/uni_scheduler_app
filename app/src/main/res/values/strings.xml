@@ -61,5 +61,9 @@
         <item>Dropped</item>
         <item>Plan to Take</item>
     </string-array>
-<!-- TODO: CLEAN UP THIS FILE-->
+    <string-array name="assessment_type_array">
+        <item>Objective</item>
+        <item>Performance</item>
+    </string-array>
+    <!-- TODO: CLEAN UP THIS FILE-->
 </resources>

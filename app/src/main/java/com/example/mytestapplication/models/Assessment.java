@@ -1,6 +1,8 @@
 package com.example.mytestapplication.models;
 
-public class Assessment {
+import java.io.Serializable;
+
+public class Assessment implements Serializable {
     private int id;
     private int courseId;
     private String type;       // "Performance" or "Objective"

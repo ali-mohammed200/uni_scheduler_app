@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,7 @@ public class DetailCourseActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AssessmentAdapter adapter;
     private Course course;
+    private ActivityResultLauncher<Intent> addAssessmentLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,32 @@ public class DetailCourseActivity extends AppCompatActivity {
         instructorPhoneView.setText("Phone: " + course.getInstructorPhone());
         instructorEmailView.setText("Email: " + course.getInstructorEmail());
 
+        loadAssessments();
+
+        addAssessmentLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        // TODO: Move to a method like in detailtermactivity
+                        AssessmentDAO updatedDao = new AssessmentDAO(this);
+                        List<Assessment> updatedAssessments = updatedDao.getAssessmentsByCourseId(course.getId());
+                        adapter.setAssessments(updatedAssessments);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+        );
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadAssessments();
+    }
+
+//    TODO: Fix data cycle issues as you navigate screens.
+//    TODO: This behavior will need to be added to all relevant flows
+//    TODO: Figure out how to remove infinite navigation loop
+    private void loadAssessments() {
         recyclerView = findViewById(R.id.recyclerViewAssessments);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -63,10 +92,22 @@ public class DetailCourseActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+
+    public void showDetailAssessment(View view) {
+        Assessment clickedAssessment = (Assessment) view.getTag(); // Retrieve the course from the adapterAdd commentMore actions
+        Intent intent = new Intent(this, DetailAssessmentActivity.class);
+        intent.putExtra("assessment", clickedAssessment);
+        startActivity(intent);
+    }
+
     public void addAssessment(View view) {
 //        Intent intent = new Intent(this, AddAssessmentActivity.class);
-//        intent.putExtra("courseId", course.getId());
+//        intent.putExtra("course", course);
 //        startActivity(intent);
+
+        Intent addIntent = new Intent(this, AddAssessmentActivity.class);
+        addIntent.putExtra("course", course);
+        addAssessmentLauncher.launch(addIntent);
     }
 
     public void openNotes(View view) {

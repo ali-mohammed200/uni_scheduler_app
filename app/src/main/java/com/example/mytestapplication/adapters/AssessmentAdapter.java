@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytestapplication.R;
 import com.example.mytestapplication.models.Assessment;
+import com.example.mytestapplication.models.Course;
 
 import java.util.List;
 
@@ -48,10 +49,15 @@ public class AssessmentAdapter extends RecyclerView.Adapter<AssessmentAdapter.As
         holder.assessmentTitle.setText(assessment.getTitle());
         holder.assessmentType.setText("Type: " + assessment.getType());
         holder.assessmentDates.setText("Due: " + assessment.getEndDate());
+        holder.itemView.setTag(assessment);
     }
 
     @Override
     public int getItemCount() {
         return assessments.size();
+    }
+
+    public void setAssessments(List<Assessment> newAssessments) {
+        this.assessments = newAssessments;
     }
 }
