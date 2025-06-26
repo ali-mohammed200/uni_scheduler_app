@@ -102,11 +102,13 @@ public class AddCourseActivity extends AppCompatActivity {
         // we want to fill term if coming from edit or from detail term
         if (editMode || term != null) {
             int termPosition = -1; // Need to manually loop since we aren't comparing object identity or we need to overwrite equals/hashcode
-            for (int i = 0; i < termAdapter.getCount(); i++) {
-                Term t = termAdapter.getItem(i);
-                if (t != null && t.getId() == term.getId()) {
-                    termPosition = i;
-                    break;
+            if (term != null) {
+                for (int i = 0; i < termAdapter.getCount(); i++) {
+                    Term t = termAdapter.getItem(i);
+                    if (t != null && t.getId() == term.getId()) {
+                        termPosition = i;
+                        break;
+                    }
                 }
             }
             if (course == null) {
