@@ -63,32 +63,46 @@ public class DetailAssessmentActivity extends AppCompatActivity {
                 assessment = assessmentDAO.getAssessmentById(assessmentId);
             }
 
-            textAssessmentTitle.setText("[" + assessment.getId() + "] " + "Title: " + assessment.getTitle());
-            assessmentDates.setText(assessment.getStartDate() + " - " + assessment.getEndDate());
-            assessmentType.setText("Type: " + assessment.getType());
-
-            courseId = assessment.getCourseId();
-            loadCourse();
+            setPageData();
 
             activityResultLauncher = registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == RESULT_OK) {
-                            Intent data = result.getData();
-                            if (data != null && data.hasExtra("deletedAssessmentId")) {
-                                int deletedId = data.getIntExtra("deletedAssessmentId", -1);
-                                if (deletedId != -1) {
-                                    // Close this screen if it was deleted from the screens on top
-                                    finish();
+                            Intent resultData = result.getData();
+                            if(resultData != null) {
+                                if (resultData.hasExtra("deletedAssessmentId")) {
+                                    int deletedId = resultData.getIntExtra("deletedAssessmentId", -1);
+                                    if (deletedId != -1) {
+                                        // Close this screen if it was deleted from the screens on top
+                                        finish();
+                                    }
+                                }
+                                if (resultData.hasExtra("originator")) {
+                                    if (resultData.getStringExtra("originator").equals("AddAssessmentActivity")){
+                                        assessment = (Assessment) resultData.getSerializableExtra("assessment");
+                                        boolean fromEdit = resultData.getBooleanExtra("fromEdit", false);
+                                        setPageData();
+                                        Log.d("DetailAssessmentActivity ResultContract", assessment + " " + fromEdit);
+                                    }
                                 }
                             }
                         }
                     }
             );
         } catch (NullPointerException e) {
-            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    private void setPageData(){
+        textAssessmentTitle.setText("[" + assessment.getId() + "] " + "Title: " + assessment.getTitle());
+        assessmentDates.setText(assessment.getStartDate() + " - " + assessment.getEndDate());
+        assessmentType.setText("Type: " + assessment.getType());
+
+        courseId = assessment.getCourseId();
+        loadCourse();
     }
 
 
@@ -106,7 +120,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         try {
             loadCourse();
         } catch (NullPointerException e) {
-            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -134,7 +148,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
             });
             recyclerView.setAdapter(adapter);
         } catch (NullPointerException e) {
-            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
     }

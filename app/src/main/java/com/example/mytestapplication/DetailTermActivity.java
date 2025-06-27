@@ -89,7 +89,7 @@ public class DetailTermActivity extends AppCompatActivity {
         try {
             loadCourses();
         } catch (NullPointerException e) {
-            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -123,7 +123,7 @@ public class DetailTermActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Pops all activities above this one
         activityResultLauncher.launch(intent);
     }
-    
+
     public void confirmAndDeleteDetailPage(View view) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Term")

@@ -95,7 +95,7 @@ public class DetailCourseActivity extends AppCompatActivity {
                     }
             );
         } catch (NullPointerException e) {
-            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -106,7 +106,7 @@ public class DetailCourseActivity extends AppCompatActivity {
         try {
             loadAssessments();
         } catch (NullPointerException e) {
-            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -135,7 +135,7 @@ public class DetailCourseActivity extends AppCompatActivity {
             });
             recyclerView.setAdapter(adapter);
         } catch (NullPointerException e) {
-            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
     }

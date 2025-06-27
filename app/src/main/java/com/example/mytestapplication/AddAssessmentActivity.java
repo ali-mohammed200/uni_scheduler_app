@@ -188,7 +188,12 @@ public class AddAssessmentActivity extends AppCompatActivity {
 
 
             Toast.makeText(this, "Assessment added", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("originator", "AddAssessmentActivity");
+            resultIntent.putExtra("assessment", new_assessment);
+            resultIntent.putExtra("fromEdit", editMode);
+            resultIntent.putExtra("assessmentId", assessmentId);
+            setResult(RESULT_OK, resultIntent);
             finish();
         } else {
             Toast.makeText(this, "Failed to add assessment", Toast.LENGTH_SHORT).show();
