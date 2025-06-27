@@ -50,18 +50,22 @@ public class DetailTermActivity extends AppCompatActivity {
         // Get passed term info
         Intent intent = getIntent();
         term = (Term) intent.getSerializableExtra("term");
-
         termId = term.getId();
-        termTitleView.setText("[" + termId + "] " + "Title: " + term.getTitle());
-        termStartView.setText("Start: " + term.getStartDate());
-        termEndView.setText("End: " + term.getEndDate());
-// TODO: Refactor other places of loading recyclerview like this
+        setPageData();
         loadCourses();
 
         activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
+                        Intent resultData = result.getData();
+                        if(resultData != null){
+                            term = (Term) resultData.getSerializableExtra("term");
+                            boolean fromEdit = resultData.getBooleanExtra("fromEdit", false);
+                            termId = resultData.getIntExtra("termId", termId);
+                            setPageData();
+                            Log.d("DetailTermActivity ResultContract", term + " " + termId + " " + fromEdit);
+                        }
                         loadCourses(); // Reload course list
                     }
                 }
@@ -72,6 +76,11 @@ public class DetailTermActivity extends AppCompatActivity {
             addIntent.putExtra("term", term); // pre-fill course with this term
             activityResultLauncher.launch(addIntent);
         });
+    }
+    private void setPageData(){
+        termTitleView.setText("[" + termId + "] " + "Title: " + term.getTitle());
+        termStartView.setText("Start: " + term.getStartDate());
+        termEndView.setText("End: " + term.getEndDate());
     }
 
     @Override
@@ -114,8 +123,7 @@ public class DetailTermActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Pops all activities above this one
         activityResultLauncher.launch(intent);
     }
-
-//    TODO: FIX edit, also make a launcher to catch this resultset
+    
     public void confirmAndDeleteDetailPage(View view) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Term")

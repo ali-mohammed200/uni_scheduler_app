@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -119,7 +120,12 @@ public class AddTermActivity extends AppCompatActivity {
 
         if (newRowId != -1) {
             Toast.makeText(this, "Term added", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("term", new_term);
+            resultIntent.putExtra("fromEdit", editMode);
+            int termId = editMode ? new_term.getId() : (int) newRowId;
+            resultIntent.putExtra("termId", termId);
+            setResult(RESULT_OK, resultIntent);
             finish();
         } else {
             Toast.makeText(this, "Failed to add term", Toast.LENGTH_SHORT).show();
