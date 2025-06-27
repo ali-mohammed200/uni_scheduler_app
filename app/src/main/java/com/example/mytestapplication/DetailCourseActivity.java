@@ -1,5 +1,7 @@
 package com.example.mytestapplication;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -155,6 +157,34 @@ public class DetailCourseActivity extends AppCompatActivity {
     public void openNote(View view) {
         Intent intent = new Intent(this, NoteActivity.class);
         intent.putExtra("courseId", course.getId());
+        activityResultLauncher.launch(intent);
+    }
+
+    public void confirmAndDeleteDetailPage(View view) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Course")
+                .setMessage("Are you sure you want to delete this course? Notes & Assessments will also be deleted")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    // Delete from DB
+                    CourseDAO dao = new CourseDAO(this);
+                    AssessmentDAO a_dao = new AssessmentDAO(this);
+                    a_dao.deleteAssessmentByCourseId(course.getId());
+                    dao.deleteCourse(course.getId());
+
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("deletedCourseId", course.getId());
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+
+    public void openEditFormDetailPage(View view) {
+        Intent intent = new Intent(this, AddCourseActivity.class);
+        intent.putExtra("editMode", true);
+        intent.putExtra("course", course);
         activityResultLauncher.launch(intent);
     }
 

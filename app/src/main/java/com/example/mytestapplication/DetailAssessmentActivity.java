@@ -1,5 +1,6 @@
 package com.example.mytestapplication;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -136,6 +137,32 @@ public class DetailAssessmentActivity extends AppCompatActivity {
             Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+// TOdO: fix edit result
+    public void confirmAndDeleteDetailPage(View view) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Assessment")
+                .setMessage("Are you sure you want to delete this assessment?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    // Delete from DB
+                    AssessmentDAO dao = new AssessmentDAO(this);
+                    dao.deleteAssessment(assessment.getId());
+
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("deletedAssessmentId", assessment.getId());
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+
+    public void openEditFormDetailPage(View view) {
+        Intent intent = new Intent(this, AddAssessmentActivity.class);
+        intent.putExtra("editMode", true);
+        intent.putExtra("assessment", assessment);
+        activityResultLauncher.launch(intent);
     }
 
     @Override

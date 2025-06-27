@@ -1,5 +1,6 @@
 package com.example.mytestapplication;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytestapplication.adapters.CourseAdapter;
+import com.example.mytestapplication.database.AssessmentDAO;
 import com.example.mytestapplication.database.CourseDAO;
+import com.example.mytestapplication.database.TermDAO;
 import com.example.mytestapplication.models.Course;
 import com.example.mytestapplication.models.Term;
 
@@ -26,8 +29,9 @@ public class DetailTermActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CourseAdapter adapter;
     private int termId;
-    private ActivityResultLauncher<Intent> addCourseLauncher;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
     private CourseDAO dao;
+    private Term term;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,7 @@ public class DetailTermActivity extends AppCompatActivity {
 
         // Get passed term info
         Intent intent = getIntent();
-        Term term = (Term) intent.getSerializableExtra("term");
+        term = (Term) intent.getSerializableExtra("term");
 
         termId = term.getId();
         termTitleView.setText("[" + termId + "] " + "Title: " + term.getTitle());
@@ -54,7 +58,7 @@ public class DetailTermActivity extends AppCompatActivity {
 // TODO: Refactor other places of loading recyclerview like this
         loadCourses();
 
-        addCourseLauncher = registerForActivityResult(
+        activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
@@ -66,7 +70,7 @@ public class DetailTermActivity extends AppCompatActivity {
         findViewById(R.id.fabAddCourse).setOnClickListener(view -> {
             Intent addIntent = new Intent(this, AddCourseActivity.class);
             addIntent.putExtra("term", term); // pre-fill course with this term
-            addCourseLauncher.launch(addIntent);
+            activityResultLauncher.launch(addIntent);
         });
     }
 
@@ -108,7 +112,41 @@ public class DetailTermActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetailCourseActivity.class);
         intent.putExtra("course", clickedCourse);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Pops all activities above this one
-        addCourseLauncher.launch(intent);
+        activityResultLauncher.launch(intent);
+    }
+
+//    TODO: FIX edit, also make a launcher to catch this resultset
+    public void confirmAndDeleteDetailPage(View view) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Term")
+                .setMessage("Are you sure you want to delete this term? Terms with courses will not be deleted")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    // Delete from DB
+                    TermDAO dao = new TermDAO(this);
+                    CourseDAO c_dao = new CourseDAO(this);
+
+                    if (c_dao.countCoursesByTermId(term.getId()) == 0) {
+                        dao.deleteTerm(term.getId());
+
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("deletedTermId", term.getId());
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Delete associated courses for this term first", Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+
+    public void openEditFormDetailPage(View view) {
+        Intent intent = new Intent(this, AddTermActivity.class);
+        intent.putExtra("editMode", true);
+        intent.putExtra("term", term);
+        activityResultLauncher.launch(intent);
     }
 
     @Override

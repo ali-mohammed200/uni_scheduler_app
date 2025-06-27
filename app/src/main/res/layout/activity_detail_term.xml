@@ -67,7 +67,28 @@
         android:layout_height="wrap_content"
         android:contentDescription="Add Course"
         android:src="@drawable/add_icon"
-        app:backgroundTint="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="delete"
+        android:onClick="confirmAndDeleteDetailPage"
+        android:src="@drawable/x_close"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="edit"
+        android:onClick="openEditFormDetailPage"
+        android:src="@drawable/edit_pencil"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fabAddCourse"
+        app:layout_constraintStart_toEndOf="@+id/fabDelete"
+        app:rippleColor="#B31919" />
 </androidx.constraintlayout.widget.ConstraintLayout>
