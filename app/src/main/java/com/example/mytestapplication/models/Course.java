@@ -24,7 +24,9 @@ public class Course implements Serializable {
                   String status, String instructorName, String instructorPhone,
                   String instructorEmail, String note) {
         this.id = id;
-        this.termId = termId;
+        if (termId != -1) {
+            this.termId = termId;
+        }
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -38,7 +40,9 @@ public class Course implements Serializable {
     public Course(int termId, String title, String startDate, String endDate,
                   String status, String instructorName, String instructorPhone,
                   String instructorEmail, String note) {
-        this.termId = termId;
+        if (termId != -1) {
+            this.termId = termId;
+        }
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;

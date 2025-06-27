@@ -91,6 +91,8 @@ public class AddCourseActivity extends AppCompatActivity {
         }
         termDAO = new TermDAO(this);
         termList = termDAO.getAllTerms();
+        Term noTerm = new Term(-1, "(No Term)", "", "");
+        termList.add(0, noTerm);
 
 
 
@@ -188,7 +190,7 @@ public class AddCourseActivity extends AppCompatActivity {
         String note = noteInput.getText().toString().trim();
 
         Term selectedTerm = (Term) termSpinner.getSelectedItem();
-        int selectedTermId = selectedTerm.getId();
+        int selectedTermId=  selectedTerm.getId();
 
         // Validate required fields
         if (title.isEmpty() || start.isEmpty() || end.isEmpty() ||
