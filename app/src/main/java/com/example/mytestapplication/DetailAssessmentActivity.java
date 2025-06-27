@@ -62,7 +62,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
                 assessment = assessmentDAO.getAssessmentById(assessmentId);
             }
 
-            textAssessmentTitle.setText("Title: " + assessment.getTitle());
+            textAssessmentTitle.setText("[" + assessment.getId() + "] " + "Title: " + assessment.getTitle());
             assessmentDates.setText(assessment.getStartDate() + " - " + assessment.getEndDate());
             assessmentType.setText("Type: " + assessment.getType());
 

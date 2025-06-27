@@ -48,7 +48,7 @@ public class DetailTermActivity extends AppCompatActivity {
         Term term = (Term) intent.getSerializableExtra("term");
 
         termId = term.getId();
-        termTitleView.setText("Title: " + term.getTitle());
+        termTitleView.setText("[" + termId + "] " + "Title: " + term.getTitle());
         termStartView.setText("Start: " + term.getStartDate());
         termEndView.setText("End: " + term.getEndDate());
 // TODO: Refactor other places of loading recyclerview like this

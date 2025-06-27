@@ -58,7 +58,7 @@ public class DetailCourseActivity extends AppCompatActivity {
                 course = courseDAO.getCourseById(courseId);
             }
 
-            courseTitleView.setText("Title: " + course.getTitle());
+            courseTitleView.setText("[" + course.getId() + "] " + "Title: " + course.getTitle());
             startDateView.setText("Start: " + course.getStartDate());
             endDateView.setText("End: " + course.getEndDate());
             statusView.setText("Status: " + course.getStatus());
