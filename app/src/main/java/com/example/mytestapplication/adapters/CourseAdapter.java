@@ -37,13 +37,13 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     }
 
     public static class CourseViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView;
-        TextView instructorTextView;
+        TextView titleTextView, instructorTextView, termTitle;
 
         public CourseViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.courseTitle);
             instructorTextView = itemView.findViewById(R.id.courseInstructor);
+            termTitle = itemView.findViewById(R.id.termTitle);
         }
     }
 
@@ -58,6 +58,11 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         Course course = courses.get(position);
         holder.titleTextView.setText(course.getTitle());
         holder.instructorTextView.setText(course.getInstructorName());
+        if (course.getTermId() == 0) {
+            holder.termTitle.setText("");
+        } else {
+            holder.termTitle.setText("\uD83D\uDCC5 Term id: " + course.getTermId());
+        }
         holder.itemView.setTag(course);
 
         holder.itemView.setOnLongClickListener(v -> {
