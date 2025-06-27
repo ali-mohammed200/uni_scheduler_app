@@ -3,6 +3,7 @@ package com.example.mytestapplication.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,15 @@ import java.util.List;
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseViewHolder> {
 
     private List<Course> courses;
+    private OnCourseDeletedListener deletedListener;
 
-    public CourseAdapter(List<Course> courses) {
+    public CourseAdapter(List<Course> courses, OnCourseDeletedListener listener) {
         this.courses = courses;
+        this.deletedListener = listener;
+    }
+
+    public interface OnCourseDeletedListener {
+        void onCourseDeleted(int courseId);
     }
 
     public static class CourseViewHolder extends RecyclerView.ViewHolder {
@@ -86,11 +93,16 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
                     AssessmentDAO a_dao = new AssessmentDAO(context);
                     a_dao.deleteAssessmentByCourseId(course.getId());
                     dao.deleteCourse(course.getId());
-//                   // TODO: Add delete notes
 
                     // Update adapter
                     courses.remove(course);
                     notifyDataSetChanged();
+                    // Notify the Activity
+                    Log.d("CourseAdapter", "in 1 deletedCourseId: " + course.getId());
+                    if (deletedListener != null) {
+                        Log.d("CourseAdapter", "in 2 deletedCourseId: " + course.getId());
+                        deletedListener.onCourseDeleted(course.getId());
+                    }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

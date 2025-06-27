@@ -76,7 +76,12 @@ public class CoursesActivity extends AppCompatActivity {
 
         dao = new CourseDAO(this);
         List<Course> courses = dao.getAllCourses();
-        adapter = new CourseAdapter(courses);
+        adapter = new CourseAdapter(courses, deletedId -> {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("deletedCourseId", deletedId);
+            Log.d("CourseActivity", "in deletedCourseId: " + deletedId);
+            setResult(RESULT_OK, resultIntent);
+        });
         recyclerView.setAdapter(adapter);
     }
 

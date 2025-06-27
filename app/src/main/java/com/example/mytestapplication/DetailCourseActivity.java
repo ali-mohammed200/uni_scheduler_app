@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -27,7 +28,7 @@ public class DetailCourseActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AssessmentAdapter adapter;
     private Course course;
-    private ActivityResultLauncher<Intent> addAssessmentLauncher;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
     private AssessmentDAO dao;
 
     @Override
@@ -47,42 +48,65 @@ public class DetailCourseActivity extends AppCompatActivity {
         instructorEmailView = findViewById(R.id.textInstructorEmail);
 
 //         Get course object passed in
-        Intent intent = getIntent();
-        course = (Course) intent.getSerializableExtra("course");
-        int courseId = intent.getIntExtra("courseId", -1);
-        Log.d("DetailCourseActivity", "Intent Course Id " + courseId);
-        if (courseId != -1) {
-            CourseDAO courseDAO = new CourseDAO(this);
-            course = courseDAO.getCourseById(courseId);
-        }
+        try {
+            Intent intent = getIntent();
+            course = (Course) intent.getSerializableExtra("course");
+            int courseId = intent.getIntExtra("courseId", -1);
+            Log.d("DetailCourseActivity", "Intent Course Id " + courseId);
+            if (courseId != -1) {
+                CourseDAO courseDAO = new CourseDAO(this);
+                course = courseDAO.getCourseById(courseId);
+            }
 
-        courseTitleView.setText("Title: " + course.getTitle());
-        startDateView.setText("Start: " + course.getStartDate());
-        endDateView.setText("End: " + course.getEndDate());
-        statusView.setText("Status: " + course.getStatus());
-        instructorNameView.setText("Instructor: " + course.getInstructorName());
-        instructorPhoneView.setText("Phone: " + course.getInstructorPhone());
-        instructorEmailView.setText("Email: " + course.getInstructorEmail());
+            courseTitleView.setText("Title: " + course.getTitle());
+            startDateView.setText("Start: " + course.getStartDate());
+            endDateView.setText("End: " + course.getEndDate());
+            statusView.setText("Status: " + course.getStatus());
+            instructorNameView.setText("Instructor: " + course.getInstructorName());
+            instructorPhoneView.setText("Phone: " + course.getInstructorPhone());
+            instructorEmailView.setText("Email: " + course.getInstructorEmail());
 
-        loadAssessments();
+            loadAssessments();
 
-        addAssessmentLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        // TODO: Move to a method like in detailtermactivity
-                        List<Assessment> updatedAssessments = dao.getAssessmentsByCourseId(course.getId());
-                        adapter.setAssessments(updatedAssessments);
-                        adapter.notifyDataSetChanged();
+            activityResultLauncher = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK) {
+                            Log.d("DetailCourseActivity", "in 1");
+                            Intent data = result.getData();
+                            if (data != null && data.hasExtra("deletedCourseId")) {
+                                int deletedId = data.getIntExtra("deletedCourseId", -1);
+                                Log.d("DetailCourseActivity", "in A" + " " + deletedId);
+                                if (deletedId != -1) {
+                                    Log.d("DetailCourseActivity", "in 2");
+                                    // Close this screen if it was deleted from the screens on top
+                                    finish();
+                                }
+                            } else {
+                                Log.d("DetailCourseActivity", "in B");
+                                // TODO: Move to a method like in detailtermactivity
+                                List<Assessment> updatedAssessments = dao.getAssessmentsByCourseId(course.getId());
+                                adapter.setAssessments(updatedAssessments);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
                     }
-                }
-        );
+            );
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        loadAssessments();
+        try {
+            loadAssessments();
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override
@@ -96,17 +120,22 @@ public class DetailCourseActivity extends AppCompatActivity {
     }
 
     private void loadAssessments() {
-        recyclerView = findViewById(R.id.recyclerViewAssessments);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        try {
+            recyclerView = findViewById(R.id.recyclerViewAssessments);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        dao = new AssessmentDAO(this);
-        List<Assessment> assessments = dao.getAssessmentsByCourseId(course.getId());
-        adapter = new AssessmentAdapter(assessments, deletedId -> {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("deletedAssessmentId", deletedId);
-            setResult(RESULT_OK, resultIntent);
-        });
-        recyclerView.setAdapter(adapter);
+            dao = new AssessmentDAO(this);
+            List<Assessment> assessments = dao.getAssessmentsByCourseId(course.getId());
+            adapter = new AssessmentAdapter(assessments, deletedId -> {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("deletedAssessmentId", deletedId);
+                setResult(RESULT_OK, resultIntent);
+            });
+            recyclerView.setAdapter(adapter);
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
 
@@ -114,13 +143,13 @@ public class DetailCourseActivity extends AppCompatActivity {
         Assessment clickedAssessment = (Assessment) view.getTag(); // Retrieve the course from the adapterAdd commentMore actions
         Intent intent = new Intent(this, DetailAssessmentActivity.class);
         intent.putExtra("assessment", clickedAssessment);
-        startActivity(intent);
+        activityResultLauncher.launch(intent);
     }
 
     public void addAssessment(View view) {
         Intent addIntent = new Intent(this, AddAssessmentActivity.class);
         addIntent.putExtra("course", course);
-        addAssessmentLauncher.launch(addIntent);
+        activityResultLauncher.launch(addIntent);
     }
 
     public void openNotes(View view) {

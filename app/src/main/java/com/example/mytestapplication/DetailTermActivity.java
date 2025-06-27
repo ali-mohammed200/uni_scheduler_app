@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,7 +73,12 @@ public class DetailTermActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        loadCourses();
+        try {
+            loadCourses();
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override
@@ -87,7 +94,12 @@ public class DetailTermActivity extends AppCompatActivity {
     private void loadCourses() {
         dao = new CourseDAO(this);
         List<Course> courses = dao.getCoursesByTermId(termId);
-        adapter = new CourseAdapter(courses);
+        adapter = new CourseAdapter(courses, deletedId -> {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("deletedCourseId", deletedId);
+            Log.d("DetailTermActivity", "in deletedCourseId: " + deletedId);
+            setResult(RESULT_OK, resultIntent);
+        });
         recyclerView.setAdapter(adapter);
     }
 
@@ -96,7 +108,7 @@ public class DetailTermActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetailCourseActivity.class);
         intent.putExtra("course", clickedCourse);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Pops all activities above this one
-        startActivity(intent);
+        addCourseLauncher.launch(intent);
     }
 
     @Override

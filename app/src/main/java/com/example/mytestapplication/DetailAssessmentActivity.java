@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -50,38 +51,43 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 ////     Get course object passed in
-        Intent intent = getIntent();
-        assessment = (Assessment) intent.getSerializableExtra("assessment");
+        try {
+            Intent intent = getIntent();
+            assessment = (Assessment) intent.getSerializableExtra("assessment");
 
-        int assessmentId = intent.getIntExtra("assessmentId", -1);
-        Log.d("DetailAssessment", "assessmentId " + assessmentId);
-        if (assessmentId != -1) {
-            AssessmentDAO assessmentDAO = new AssessmentDAO(this);
-            assessment = assessmentDAO.getAssessmentById(assessmentId);
-        }
+            int assessmentId = intent.getIntExtra("assessmentId", -1);
+            Log.d("DetailAssessment", "assessmentId " + assessmentId);
+            if (assessmentId != -1) {
+                AssessmentDAO assessmentDAO = new AssessmentDAO(this);
+                assessment = assessmentDAO.getAssessmentById(assessmentId);
+            }
 
-        textAssessmentTitle.setText("Title: " + assessment.getTitle());
-        assessmentDates.setText(assessment.getStartDate() + " - " + assessment.getEndDate());
-        assessmentType.setText("Type: " + assessment.getType());
+            textAssessmentTitle.setText("Title: " + assessment.getTitle());
+            assessmentDates.setText(assessment.getStartDate() + " - " + assessment.getEndDate());
+            assessmentType.setText("Type: " + assessment.getType());
 
-        courseId = assessment.getCourseId();
-        loadCourse();
+            courseId = assessment.getCourseId();
+            loadCourse();
 
-        activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null && data.hasExtra("deletedAssessmentId")) {
-                            int deletedId = data.getIntExtra("deletedAssessmentId", -1);
-                            if (deletedId != -1) {
-                                // Close this screen if it was deleted from the screens on top
-                                finish();
+            activityResultLauncher = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null && data.hasExtra("deletedAssessmentId")) {
+                                int deletedId = data.getIntExtra("deletedAssessmentId", -1);
+                                if (deletedId != -1) {
+                                    // Close this screen if it was deleted from the screens on top
+                                    finish();
+                                }
                             }
                         }
                     }
-                }
-        );
+            );
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
 
@@ -96,7 +102,12 @@ public class DetailAssessmentActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        loadCourse();
+        try {
+            loadCourse();
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override
@@ -110,11 +121,21 @@ public class DetailAssessmentActivity extends AppCompatActivity {
     }
 
     private void loadCourse() {
-        dao = new CourseDAO(this);
-        Course course = dao.getCourseById(courseId);
+        try {
+            dao = new CourseDAO(this);
+            Course course = dao.getCourseById(courseId);
 
-        adapter = new CourseAdapter(new ArrayList<>(List.of(course)));
-        recyclerView.setAdapter(adapter);
+            adapter = new CourseAdapter(new ArrayList<>(List.of(course)), deletedId -> {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("deletedCourseId", deletedId);
+                Log.d("DetailAssessmentActivity", "in deletedCourseId: " + deletedId);
+                setResult(RESULT_OK, resultIntent);
+            });
+            recyclerView.setAdapter(adapter);
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Unable to find deleted School Object", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override
