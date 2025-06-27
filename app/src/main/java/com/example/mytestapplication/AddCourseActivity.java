@@ -271,7 +271,12 @@ public class AddCourseActivity extends AppCompatActivity {
             );
 
             Toast.makeText(this, "Course added", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("originator", "AddCourseActivity");
+            resultIntent.putExtra("course", new_course);
+            resultIntent.putExtra("fromEdit", editMode);
+            resultIntent.putExtra("courseId", courseId);
+            setResult(RESULT_OK, resultIntent);
             finish(); // close activity
         } else {
             Toast.makeText(this, "Failed to add course", Toast.LENGTH_SHORT).show();

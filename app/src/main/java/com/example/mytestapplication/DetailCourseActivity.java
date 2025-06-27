@@ -60,32 +60,29 @@ public class DetailCourseActivity extends AppCompatActivity {
                 course = courseDAO.getCourseById(courseId);
             }
 
-            courseTitleView.setText("[" + course.getId() + "] " + "Title: " + course.getTitle());
-            startDateView.setText("Start: " + course.getStartDate());
-            endDateView.setText("End: " + course.getEndDate());
-            statusView.setText("Status: " + course.getStatus());
-            instructorNameView.setText("Instructor: " + course.getInstructorName());
-            instructorPhoneView.setText("Phone: " + course.getInstructorPhone());
-            instructorEmailView.setText("Email: " + course.getInstructorEmail());
-
-            loadAssessments();
+            setPageData();
 
             activityResultLauncher = registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == RESULT_OK) {
-                            Log.d("DetailCourseActivity", "in 1");
-                            Intent data = result.getData();
-                            if (data != null && data.hasExtra("deletedCourseId")) {
-                                int deletedId = data.getIntExtra("deletedCourseId", -1);
-                                Log.d("DetailCourseActivity", "in A" + " " + deletedId);
-                                if (deletedId != -1) {
-                                    Log.d("DetailCourseActivity", "in 2");
-                                    // Close this screen if it was deleted from the screens on top
-                                    finish();
+                            Intent resultData = result.getData();
+                            if(resultData != null) {
+                                if (resultData.hasExtra("deletedCourseId")) {
+                                    int deletedId = resultData.getIntExtra("deletedCourseId", -1);
+                                    if (deletedId != -1) {
+                                        // Close this screen if it was deleted from the screens on top
+                                        finish();
+                                    }
+                                } else if (resultData.hasExtra("originator")) {
+                                    if (resultData.getStringExtra("originator").equals("AddCourseActivity")){
+                                        course = (Course) resultData.getSerializableExtra("course");
+                                        boolean fromEdit = resultData.getBooleanExtra("fromEdit", false);
+                                        setPageData();
+                                        Log.d("DetailAssessmentActivity ResultContract", course + " " + fromEdit);
+                                    }
                                 }
                             } else {
-                                Log.d("DetailCourseActivity", "in B");
                                 // TODO: Move to a method like in detailtermactivity
                                 List<Assessment> updatedAssessments = dao.getAssessmentsByCourseId(course.getId());
                                 adapter.setAssessments(updatedAssessments);
@@ -98,6 +95,18 @@ public class DetailCourseActivity extends AppCompatActivity {
             Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    private void setPageData() {
+        courseTitleView.setText("[" + course.getId() + "] " + "Title: " + course.getTitle());
+        startDateView.setText("Start: " + course.getStartDate());
+        endDateView.setText("End: " + course.getEndDate());
+        statusView.setText("Status: " + course.getStatus());
+        instructorNameView.setText("Instructor: " + course.getInstructorName());
+        instructorPhoneView.setText("Phone: " + course.getInstructorPhone());
+        instructorEmailView.setText("Email: " + course.getInstructorEmail());
+
+        loadAssessments();
     }
 
     @Override
