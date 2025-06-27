@@ -1,6 +1,8 @@
 package com.example.mytestapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -39,6 +41,18 @@ public class NoteActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Course not found", Toast.LENGTH_SHORT).show();
             finish();
+        }
+    }
+
+    public void shareNote(View view){
+        String note = noteEditText.getText().toString().trim();
+        if (!note.isEmpty()) {
+            Intent smsIntent = new Intent(Intent.ACTION_SEND);
+            smsIntent.setType("text/plain");
+            smsIntent.putExtra(Intent.EXTRA_TEXT, note);
+            startActivity(Intent.createChooser(smsIntent, "Share note via SMS"));
+        } else {
+            Toast.makeText(NoteActivity.this, "Note is empty", Toast.LENGTH_SHORT).show();
         }
     }
 
