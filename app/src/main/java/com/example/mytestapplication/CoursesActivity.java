@@ -22,7 +22,7 @@ public class CoursesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private CourseAdapter adapter;
-    private ActivityResultLauncher<Intent> addCourseLauncher;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
     private CourseDAO dao;
 
 
@@ -36,7 +36,7 @@ public class CoursesActivity extends AppCompatActivity {
 
         loadCourses();
 
-        addCourseLauncher = registerForActivityResult(
+        activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
@@ -51,7 +51,7 @@ public class CoursesActivity extends AppCompatActivity {
 
     public void addCourse(View view) {
         Intent intent = new Intent(CoursesActivity.this, AddCourseActivity.class);
-        addCourseLauncher.launch(intent);
+        activityResultLauncher.launch(intent);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class CoursesActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetailCourseActivity.class);
         intent.putExtra("course", clickedCourse);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        activityResultLauncher.launch(intent);
     }
     @Override
     public boolean onSupportNavigateUp() {

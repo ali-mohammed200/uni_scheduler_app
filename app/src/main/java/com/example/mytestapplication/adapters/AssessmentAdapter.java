@@ -23,9 +23,15 @@ import java.util.List;
 public class AssessmentAdapter extends RecyclerView.Adapter<AssessmentAdapter.AssessmentViewHolder> {
 
     private List<Assessment> assessments;
+    private OnAssessmentDeletedListener deletedListener;
 
-    public AssessmentAdapter(List<Assessment> assessments) {
+    public AssessmentAdapter(List<Assessment> assessments, OnAssessmentDeletedListener listener) {
         this.assessments = assessments;
+        this.deletedListener = listener;
+    }
+
+    public interface OnAssessmentDeletedListener {
+        void onAssessmentDeleted(int assessmentId);
     }
 
     public static class AssessmentViewHolder extends RecyclerView.ViewHolder {
@@ -92,6 +98,11 @@ public class AssessmentAdapter extends RecyclerView.Adapter<AssessmentAdapter.As
                     // Update adapter
                     assessments.remove(assessment);
                     notifyDataSetChanged();
+
+                    // Notify the Activity
+                    if (deletedListener != null) {
+                        deletedListener.onAssessmentDeleted(assessment.getId());
+                    }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

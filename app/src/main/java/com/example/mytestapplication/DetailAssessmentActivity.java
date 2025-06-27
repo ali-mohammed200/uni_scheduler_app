@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +31,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CourseAdapter adapter;
     private int courseId;
-
+    private ActivityResultLauncher<Intent> activityResultLauncher;
     private CourseDAO dao;
 
 
@@ -64,6 +66,22 @@ public class DetailAssessmentActivity extends AppCompatActivity {
 
         courseId = assessment.getCourseId();
         loadCourse();
+
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.hasExtra("deletedAssessmentId")) {
+                            int deletedId = data.getIntExtra("deletedAssessmentId", -1);
+                            if (deletedId != -1) {
+                                // Close this screen if it was deleted from the screens on top
+                                finish();
+                            }
+                        }
+                    }
+                }
+        );
     }
 
 
@@ -72,7 +90,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetailCourseActivity.class);
         intent.putExtra("course", clickedCourse);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        activityResultLauncher.launch(intent);
     }
 
     @Override

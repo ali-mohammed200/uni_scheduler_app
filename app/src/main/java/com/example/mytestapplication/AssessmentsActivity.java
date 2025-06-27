@@ -72,7 +72,12 @@ public class AssessmentsActivity extends AppCompatActivity {
 
         dao = new AssessmentDAO(this);
         List<Assessment> assessments = dao.getAllAssessments();
-        adapter = new AssessmentAdapter(assessments);
+        adapter = new AssessmentAdapter(assessments, deletedId -> {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("deletedAssessmentId", deletedId);
+            setResult(RESULT_OK, resultIntent);
+        });
+
         recyclerView.setAdapter(adapter);
     }
 
