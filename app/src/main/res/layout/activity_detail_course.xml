@@ -60,11 +60,11 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/buttonOpenNotes"
+        android:id="@+id/buttonOpenNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="openNotes"
-        android:text="View Notes"
+        android:onClick="openNote"
+        android:text="View Note"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -81,7 +81,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonOpenNotes"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOpenNote"
         app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

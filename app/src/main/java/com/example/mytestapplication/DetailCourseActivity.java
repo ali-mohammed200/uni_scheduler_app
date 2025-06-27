@@ -152,11 +152,10 @@ public class DetailCourseActivity extends AppCompatActivity {
         activityResultLauncher.launch(addIntent);
     }
 
-    public void openNotes(View view) {
-//        Intent intent = new Intent(this, NotesActivity.class);
-//        intent.putExtra("courseId", course.getId());
-//        intent.putExtra("note", course.getNote());
-//        startActivity(intent);
+    public void openNote(View view) {
+        Intent intent = new Intent(this, NoteActivity.class);
+        intent.putExtra("courseId", course.getId());
+        activityResultLauncher.launch(intent);
     }
 
     @Override
