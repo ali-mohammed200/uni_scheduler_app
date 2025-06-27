@@ -126,6 +126,21 @@ public class AddAssessmentActivity extends AppCompatActivity {
             return;
         }
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setLenient(false);
+        try {
+            Date startDate = sdf.parse(start);
+            Date endDate = sdf.parse(end);
+
+            if (startDate.after(endDate)) {
+                Toast.makeText(this, "Start date must be before or equal to end date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Assessment new_assessment;
         dao = new AssessmentDAO(this);
         long newRowId;

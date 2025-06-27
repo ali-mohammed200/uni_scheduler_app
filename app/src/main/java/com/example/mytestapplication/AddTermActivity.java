@@ -17,9 +17,11 @@ import com.example.mytestapplication.database.TermDAO;
 import com.example.mytestapplication.models.Course;
 import com.example.mytestapplication.models.Term;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 
 public class AddTermActivity extends AppCompatActivity {
 
@@ -86,6 +88,21 @@ public class AddTermActivity extends AppCompatActivity {
 
         if (title.isEmpty() || start.isEmpty() || end.isEmpty()) {
             Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setLenient(false);
+        try {
+            Date startDate = sdf.parse(start);
+            Date endDate = sdf.parse(end);
+
+            if (startDate.after(endDate)) {
+                Toast.makeText(this, "Start date must be before or equal to end date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show();
             return;
         }
 
