@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_edit"
-        android:title="Edit"
         android:orderInCategory="100"
+        android:title="Edit"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_add"
-        android:title="Add"
         android:orderInCategory="200"
+        android:title="Add"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_delete"
-        android:title="Delete"
         android:orderInCategory="300"
+        android:title="Delete"
         app:showAsAction="never" />
 </menu>

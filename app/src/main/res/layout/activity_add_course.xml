@@ -26,17 +26,17 @@
             android:id="@+id/inputStartDate"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:hint="Start Date (yyyy-mm-dd)"
+            android:clickable="true"
             android:focusable="false"
-            android:clickable="true" />
+            android:hint="Start Date (yyyy-mm-dd)" />
 
         <EditText
             android:id="@+id/inputEndDate"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:hint="End Date (yyyy-mm-dd)"
+            android:clickable="true"
             android:focusable="false"
-            android:clickable="true" />
+            android:hint="End Date (yyyy-mm-dd)" />
 
         <Spinner
             android:id="@+id/spinnerStatus"
@@ -68,17 +68,17 @@
             android:id="@+id/inputNote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Note"
-            android:minLines="3"
             android:gravity="top"
-            android:inputType="textMultiLine" />
+            android:hint="Note"
+            android:inputType="textMultiLine"
+            android:minLines="3" />
 
         <Button
             android:id="@+id/buttonSaveCourse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Course"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:text="Save Course" />
 
     </LinearLayout>
 </ScrollView>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/courseCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -22,32 +21,32 @@
             android:text="Performance Assessment"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/assessmentType"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Type: Objective"
-            android:textSize="14sp"
             android:textColor="#444"
-            app:layout_constraintTop_toBottomOf="@id/assessmentTitle"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/assessmentTitle" />
 
         <TextView
             android:id="@+id/assessmentDates"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Due: May 1, 2025"
-            android:textSize="14sp"
             android:textColor="#666"
-            app:layout_constraintTop_toBottomOf="@id/assessmentType"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/assessmentType" />
 
         <ImageView
             android:id="@+id/imageView2"

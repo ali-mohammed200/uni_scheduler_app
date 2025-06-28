@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.mytestapplication'
+    namespace 'com.example.uniblazerorganizer'
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.example.mytestapplication"
+        applicationId "com.example.uniblazerorganizer"
         minSdk 26
         targetSdk 35
         versionCode 1
