@@ -145,6 +145,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
                 resultIntent.putExtra("deletedCourseId", deletedId);
                 Log.d("DetailAssessmentActivity", "in deletedCourseId: " + deletedId);
                 setResult(RESULT_OK, resultIntent);
+                finish();
             });
             recyclerView.setAdapter(adapter);
         } catch (NullPointerException e) {
