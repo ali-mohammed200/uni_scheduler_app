@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,6 +46,25 @@ public class DetailAssessmentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_assessment);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        View rootView = findViewById(R.id.root_view); // your root layout
+        recyclerView = findViewById(R.id.recyclerViewTermCourses);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Only enable toggle in landscape
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            toolbar.setVisibility(View.GONE);
+            rootView.setOnClickListener(v -> {
+                if (toolbar.isShown()) {
+                    toolbar.setVisibility(View.GONE);
+                } else {
+                    toolbar.setVisibility(View.VISIBLE);
+                }
+            });
+        }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Assessment Details");

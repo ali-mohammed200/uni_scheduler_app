@@ -21,4 +21,6 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
+    <style name="Base.Theme.MyTestApplicationNoActionBar" parent="Theme.Material3.Light.NoActionBar">
+    </style>
 </resources>
