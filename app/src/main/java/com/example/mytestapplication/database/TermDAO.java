@@ -17,10 +17,6 @@ public class TermDAO {
         db = DatabaseHelper.getInstance(context).getWritableDatabase();
     }
 
-    public void close(){
-        db.close();
-    }
-
     public long insertTerm(Term term) {
         ContentValues values = new ContentValues();
         values.put("title", term.getTitle());

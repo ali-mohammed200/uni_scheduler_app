@@ -18,10 +18,6 @@ public class AssessmentDAO {
         db = DatabaseHelper.getInstance(context).getWritableDatabase();
     }
 
-    public void close(){
-        db.close();
-    }
-
     public long insertAssessment(Assessment assessment) {
         ContentValues values = new ContentValues();
         values.put("course_id", assessment.getCourseId());

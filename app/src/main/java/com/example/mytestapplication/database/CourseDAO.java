@@ -17,10 +17,6 @@ public class CourseDAO {
         db = DatabaseHelper.getInstance(context).getWritableDatabase();
     }
 
-    public void close(){
-        db.close();
-    }
-
     public long insertCourse(Course course) {
         ContentValues values = new ContentValues();
         values.put("term_id", course.getTermId());

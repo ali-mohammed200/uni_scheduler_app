@@ -99,16 +99,6 @@ public class DetailTermActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            dao.close();
-        } catch (NullPointerException e) {
-            Log.d("onDestroy", "NullPointerException - DOA empty");
-        }
-    }
-
     private void loadCourses() {
         dao = new CourseDAO(this);
         List<Course> courses = dao.getCoursesByTermId(termId);

@@ -241,15 +241,6 @@ public class AddAssessmentActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-        } catch (NullPointerException e) {
-            Log.d("onDestroy", "NullPointerException - DOA empty");
-        }
-    }
-
-    @Override
     public boolean onSupportNavigateUp() {
         finish();
         return true;

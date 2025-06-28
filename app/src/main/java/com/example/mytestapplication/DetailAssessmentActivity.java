@@ -153,16 +153,6 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            dao.close();
-        } catch (NullPointerException e) {
-            Log.d("onDestroy", "NullPointerException - DOA empty");
-        }
-    }
-
     private void loadCourse() {
         try {
             dao = new CourseDAO(this);

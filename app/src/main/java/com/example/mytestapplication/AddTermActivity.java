@@ -134,16 +134,6 @@ public class AddTermActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            dao.close();
-        } catch (NullPointerException e) {
-            Log.d("onDestroy", "NullPointerException - DOA empty");
-        }
-    }
-
-    @Override
     public boolean onSupportNavigateUp() {
         finish();
         return true;

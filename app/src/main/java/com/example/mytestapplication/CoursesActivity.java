@@ -60,16 +60,6 @@ public class CoursesActivity extends AppCompatActivity {
         loadCourses();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            dao.close();
-        } catch (NullPointerException e) {
-            Log.d("onDestroy", "NullPointerException - DOA empty");
-        }
-    }
-
     private void loadCourses(){
         recyclerView = findViewById(R.id.recyclerViewCourses);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

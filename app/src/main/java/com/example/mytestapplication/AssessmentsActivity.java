@@ -56,15 +56,6 @@ public class AssessmentsActivity extends AppCompatActivity {
         loadAssessments();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            dao.close();
-        } catch (NullPointerException e) {
-            Log.d("onDestroy", "NullPointerException - DOA empty");
-        }
-    }
 
     private void loadAssessments() {
         recyclerView = findViewById(R.id.recyclerViewAssessments);

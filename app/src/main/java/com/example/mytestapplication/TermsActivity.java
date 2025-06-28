@@ -63,15 +63,6 @@ public class TermsActivity extends AppCompatActivity {
         loadTerms();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            dao.close();
-        } catch (NullPointerException e) {
-            Log.d("onDestroy", "NullPointerException - DOA empty");
-        }
-    }
 
     private void loadTerms(){
         dao = new TermDAO(this);

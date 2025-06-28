@@ -150,16 +150,6 @@ public class DetailCourseActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            dao.close();
-        } catch (NullPointerException e) {
-            Log.d("onDestroy", "NullPointerException - DOA empty");
-        }
-    }
-
     private void loadAssessments() {
         try {
             recyclerView = findViewById(R.id.recyclerViewAssessments);
