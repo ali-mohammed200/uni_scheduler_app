@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,6 +47,8 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Assessment Details");
 
+        createPlaceHolderTextView();
+
         assessmentDates = findViewById(R.id.assessmentDates);
         textAssessmentTitle = findViewById(R.id.textAssessmentTitle);
         assessmentType = findViewById(R.id.assessmentType);
@@ -70,7 +74,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
                     result -> {
                         if (result.getResultCode() == RESULT_OK) {
                             Intent resultData = result.getData();
-                            if(resultData != null) {
+                            if (resultData != null) {
                                 if (resultData.hasExtra("deletedAssessmentId")) {
                                     int deletedId = resultData.getIntExtra("deletedAssessmentId", -1);
                                     if (deletedId != -1) {
@@ -79,7 +83,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
                                     }
                                 }
                                 if (resultData.hasExtra("originator")) {
-                                    if (resultData.getStringExtra("originator").equals("AddAssessmentActivity")){
+                                    if (resultData.getStringExtra("originator").equals("AddAssessmentActivity")) {
                                         assessment = (Assessment) resultData.getSerializableExtra("assessment");
                                         boolean fromEdit = resultData.getBooleanExtra("fromEdit", false);
                                         setPageData();
@@ -96,7 +100,31 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         }
     }
 
-    private void setPageData(){
+    private void createPlaceHolderTextView() {
+        ConstraintLayout rootLayout = findViewById(R.id.constraintLayoutMain); // your root ConstraintLayout
+
+        TextView backgroundLabel = new TextView(this);
+        backgroundLabel.setText("Associated Course");
+        backgroundLabel.setAlpha(0.05f);
+        backgroundLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
+
+        backgroundLabel.setLayoutParams(params);
+
+        // Insert as the **first view** to make sure it has lowest Z-index
+        rootLayout.addView(backgroundLabel, 0);
+    }
+
+    private void setPageData() {
         textAssessmentTitle.setText("[" + assessment.getId() + "] " + "Title: " + assessment.getTitle());
         assessmentDates.setText(assessment.getStartDate() + " - " + assessment.getEndDate());
         assessmentType.setText("Type: " + assessment.getType());
@@ -153,7 +181,7 @@ public class DetailAssessmentActivity extends AppCompatActivity {
             finish();
         }
     }
-// TOdO: fix edit result
+
     public void confirmAndDeleteDetailPage(View view) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Assessment")

@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +51,8 @@ public class DetailCourseActivity extends AppCompatActivity {
         instructorNameView = findViewById(R.id.textInstructorName);
         instructorPhoneView = findViewById(R.id.textInstructorPhone);
         instructorEmailView = findViewById(R.id.textInstructorEmail);
+
+        createPlaceHolderTextView();
 
 //         Get course object passed in
         try {
@@ -95,6 +100,31 @@ public class DetailCourseActivity extends AppCompatActivity {
             Toast.makeText(this, "Unable to find the deleted object", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    private void createPlaceHolderTextView() {
+        ConstraintLayout rootLayout = findViewById(R.id.constraintLayoutMain); // your root ConstraintLayout
+        Button button = findViewById(R.id.buttonOpenNote);
+
+        TextView backgroundLabel = new TextView(this);
+        backgroundLabel.setText("List of Associated Assessments");
+        backgroundLabel.setAlpha(0.05f);
+        backgroundLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        params.topToBottom = button.getId();
+        params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
+
+        backgroundLabel.setLayoutParams(params);
+
+        // Insert as the **first view** to make sure it has lowest Z-index
+        rootLayout.addView(backgroundLabel, 0);
     }
 
     private void setPageData() {
