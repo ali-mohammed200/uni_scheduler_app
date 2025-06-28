@@ -248,10 +248,10 @@ public class DetailCourseActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_alerts) {
-            // Handle "Alerts" click
-//            Intent intent = new Intent(this, ManageAlertsActivity.class);
-//            intent.putExtra("assessment", assessment); // pass current assessment
-//            startActivity(intent);
+            Intent intent = new Intent(this, ManageAlertActivity.class);
+            intent.putExtra("objectId", course.getId());
+            intent.putExtra("objectType", "Course");
+            startActivity(intent);
             return true;
         } else if (id == R.id.menu_edit) {
             openEditFormDetailPage(item.getActionView());

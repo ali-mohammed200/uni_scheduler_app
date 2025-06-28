@@ -28,6 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE terms (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, start_date TEXT, end_date TEXT)");
         db.execSQL("CREATE TABLE courses (id INTEGER PRIMARY KEY AUTOINCREMENT, term_id INTEGER, title TEXT, start_date TEXT, end_date TEXT, status TEXT, instructor_name TEXT, instructor_phone TEXT, instructor_email TEXT, note TEXT, FOREIGN KEY(term_id) REFERENCES terms(id))");
         db.execSQL("CREATE TABLE assessments (id INTEGER PRIMARY KEY AUTOINCREMENT, course_id INTEGER, type TEXT, title TEXT, start_date TEXT, end_date TEXT, FOREIGN KEY(course_id) REFERENCES courses(id))");
+        db.execSQL("CREATE TABLE alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, object_type TEXT NOT NULL, object_id INTEGER NOT NULL, start_toggle INTEGER NOT NULL CHECK(start_toggle IN (0,1)), end_toggle INTEGER NOT NULL CHECK(end_toggle IN (0,1)))");
     }
 
     // Called when DB version is upgraded meaning schema changes
@@ -36,6 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS assessments");
         db.execSQL("DROP TABLE IF EXISTS courses");
         db.execSQL("DROP TABLE IF EXISTS terms");
+        db.execSQL("DROP TABLE IF EXISTS alerts");
         onCreate(db);
     }
 }

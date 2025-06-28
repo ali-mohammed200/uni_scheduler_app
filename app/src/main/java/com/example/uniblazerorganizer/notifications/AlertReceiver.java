@@ -13,31 +13,47 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
 import com.example.uniblazerorganizer.DetailAssessmentActivity;
+import com.example.uniblazerorganizer.DetailCourseActivity;
+import com.example.uniblazerorganizer.HomeActivity;
 import com.example.uniblazerorganizer.R;
 
-public class AssessmentsAlertReceiver extends BroadcastReceiver {
+import java.util.HashMap;
+import java.util.Map;
 
-    private String channelId;
-    private String channelName;
+public class AlertReceiver extends BroadcastReceiver {
+
+    private String channelId = "default_channel";
+    private String channelName = "Default Notifications";
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Map<String, Class<?>> activityMap = new HashMap<>();
+        activityMap.put("Default", HomeActivity.class);
+        activityMap.put("Course", DetailCourseActivity.class);
+        activityMap.put("Assessment", DetailAssessmentActivity.class);
+
+
         String title = intent.getStringExtra("title");
         String message = intent.getStringExtra("message");
-        int assessmentId = intent.getIntExtra("assessmentId", -1);
+        int objectId = intent.getIntExtra("objectId", -1);
+        String objectType = intent.getStringExtra("objectType");
 
-        channelId = intent.getStringExtra("channelId");
-        channelName = intent.getStringExtra("channelName");
+        if (objectType != null) {
+            channelId = objectType.toLowerCase() + "_channel";
+            channelName = objectType + " Alerts";
+        } else {
+            objectType = "Default";
+        }
 
-        if (channelId == null) channelId = "default_channel";
-        if (channelName == null) channelName = "General Notifications";
+        Class<?> targetClass = activityMap.get(objectType);
 
-        Intent notificationIntent = new Intent(context, DetailAssessmentActivity.class);
-        notificationIntent.putExtra("assessmentId", assessmentId); // pass the ID
-        notificationIntent.setData(Uri.parse("custom://assessment/" + assessmentId)); // ensure uniquenes
+
+        Intent notificationIntent = new Intent(context, targetClass);
+        notificationIntent.putExtra(objectType.toLowerCase() + "Id", objectId); // pass the ID
+        notificationIntent.setData(Uri.parse("custom://" + objectType.toLowerCase() + "/" + objectId)); // ensure uniquenes
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, assessmentId, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, objectId, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -49,7 +65,7 @@ public class AssessmentsAlertReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId).setSmallIcon(R.drawable.outline_alarm_24).setContentTitle(title).setContentText(message).setContentIntent(pendingIntent).setAutoCancel(true).setPriority(NotificationCompat.PRIORITY_HIGH);
 
-        Log.d("AssessmentsAlertReceiver", "Received alarm: id " + assessmentId + " " + title + " - " + message);
+        Log.d("AlertReceiver", "Received alarm: id " + objectId + " " + title + " - " + message);
         manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 }

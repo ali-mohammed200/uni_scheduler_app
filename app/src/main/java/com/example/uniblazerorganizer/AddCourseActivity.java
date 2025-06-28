@@ -1,9 +1,7 @@
 package com.example.uniblazerorganizer;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -21,7 +19,6 @@ import com.example.uniblazerorganizer.database.CourseDAO;
 import com.example.uniblazerorganizer.database.TermDAO;
 import com.example.uniblazerorganizer.models.Course;
 import com.example.uniblazerorganizer.models.Term;
-import com.example.uniblazerorganizer.notifications.CoursesAlertReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -223,15 +220,6 @@ public class AddCourseActivity extends AppCompatActivity {
             Log.d("AddCourseActivity", "DB Transaction Success - newRowId: " + newRowId);
             Log.d("AddCourseActivity", "DB Transaction Success - courseId: " + courseId);
 
-            scheduleAlert("Course Reminder", "Course \"" + title + "\" starts tomorrow!", start, courseId, -oneDay // 1 day before
-            );
-
-            scheduleAlert("Course Today", "\"" + title + "\" starts today! (" + start + " - " + end + ")", start, courseId, 0 // same day (midnight)
-            );
-
-            scheduleAlert("Course Ended", "Course \"" + title + "\" has ended.", end, courseId, 1000 // 1 second after midnight
-            );
-
             Toast.makeText(this, "Course added", Toast.LENGTH_SHORT).show();
             Intent resultIntent = new Intent();
             resultIntent.putExtra("originator", "AddCourseActivity");
@@ -245,32 +233,6 @@ public class AddCourseActivity extends AppCompatActivity {
         }
     }
 
-    private void scheduleAlert(String title, String message, String dateStr, int courseId, long offsetMillis) {
-        try {
-//            TODO: Build out boot persistence for notifications
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            sdf.setLenient(false);
-            Date date = sdf.parse(dateStr);
-            long triggerTime = date.getTime() + offsetMillis;
-//            long triggerTime = System.currentTimeMillis() + offsetMillis; // Uncomment to test, arg 5000 => 5 sec from now
-
-            Intent intent = new Intent(this, CoursesAlertReceiver.class);
-            intent.putExtra("title", title);
-            intent.putExtra("message", message);
-            intent.putExtra("courseId", courseId);
-
-            intent.putExtra("channelId", "course_channel");
-            intent.putExtra("channelName", "Course Alerts");
-
-            int requestCode = (int) System.currentTimeMillis();
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_IMMUTABLE);
-
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public boolean onSupportNavigateUp() {

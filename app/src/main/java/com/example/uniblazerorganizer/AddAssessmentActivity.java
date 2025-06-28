@@ -1,9 +1,7 @@
 package com.example.uniblazerorganizer;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -20,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.uniblazerorganizer.database.AssessmentDAO;
 import com.example.uniblazerorganizer.models.Assessment;
 import com.example.uniblazerorganizer.models.Course;
-import com.example.uniblazerorganizer.notifications.AssessmentsAlertReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -164,15 +161,6 @@ public class AddAssessmentActivity extends AppCompatActivity {
             Log.d("AddAssessmentActivity", "DB Transaction Success - newRowId: " + newRowId);
             Log.d("AddAssessmentActivity", "DB Transaction Success - assessmentId: " + assessmentId);
 
-            scheduleAlert("Assessment Reminder", "Assessment \"" + title + "\" starts tomorrow!", start, assessmentId, -oneDay // 1 day before
-            );
-
-            scheduleAlert(type + " Assessment Today", "\"" + title + "\" starts today! (" + start + " - " + end + ")", start, assessmentId, 0 // same day (midnight)
-            );
-
-            scheduleAlert(type + " Assessment Ended", "Assessment \"" + title + "\" has ended.", end, assessmentId, 1000 // 1 second after midnight
-            );
-
 
             Toast.makeText(this, "Assessment added", Toast.LENGTH_SHORT).show();
             Intent resultIntent = new Intent();
@@ -187,32 +175,6 @@ public class AddAssessmentActivity extends AppCompatActivity {
         }
     }
 
-    private void scheduleAlert(String title, String message, String dateStr, int assessmentId, long offsetMillis) {
-        try {
-//            TODO: Build out boot persistence for notifications
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            sdf.setLenient(false);
-            Date date = sdf.parse(dateStr);
-            long triggerTime = date.getTime() + offsetMillis;
-//            long triggerTime = System.currentTimeMillis() + offsetMillis; // Uncomment to test, arg 5000 => 5 sec from now
-
-            Intent intent = new Intent(this, AssessmentsAlertReceiver.class);
-            intent.putExtra("title", title);
-            intent.putExtra("message", message);
-            intent.putExtra("assessmentId", assessmentId);
-
-            intent.putExtra("channelId", "assessment_channel");
-            intent.putExtra("channelName", "Assessment Alerts");
-
-            int requestCode = (int) System.currentTimeMillis();
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_IMMUTABLE);
-
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public boolean onSupportNavigateUp() {
