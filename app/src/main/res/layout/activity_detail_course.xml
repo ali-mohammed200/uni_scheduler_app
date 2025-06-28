@@ -96,7 +96,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonOpenNote" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonOpenNote"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddAssessment"

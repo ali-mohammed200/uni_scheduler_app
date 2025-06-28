@@ -58,7 +58,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textTermEnd" />
+        app:layout_constraintTop_toBottomOf="@id/textTermEnd"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"
+        />
 
     <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
