@@ -49,6 +49,7 @@ public class AddTermActivity extends AppCompatActivity {
 
         editMode = getIntent().getBooleanExtra("editMode",false);
         if (editMode) {
+            getSupportActionBar().setTitle("Edit Term");
             term = (Term) getIntent().getSerializableExtra("term");
             prefillForm();
         }

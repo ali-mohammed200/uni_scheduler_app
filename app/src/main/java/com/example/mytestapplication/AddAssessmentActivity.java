@@ -60,6 +60,7 @@ public class AddAssessmentActivity extends AppCompatActivity {
         course = (Course) getIntent().getSerializableExtra("course");
         editMode = getIntent().getBooleanExtra("editMode",false);
         if (editMode){
+            getSupportActionBar().setTitle("Edit Assessment");
             assessment = (Assessment) getIntent().getSerializableExtra("assessment");
             courseId = assessment.getCourseId();
         } else {

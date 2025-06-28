@@ -87,6 +87,7 @@ public class AddCourseActivity extends AppCompatActivity {
         editMode = getIntent().getBooleanExtra("editMode", false);
 
         if (editMode) {
+            getSupportActionBar().setTitle("Edit Course");
             term = termDAO.getTermById(course.getTermId());
         }
         termDAO = new TermDAO(this);
