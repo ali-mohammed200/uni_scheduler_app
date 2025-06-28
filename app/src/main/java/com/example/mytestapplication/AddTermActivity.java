@@ -121,6 +121,7 @@ public class AddTermActivity extends AppCompatActivity {
         if (newRowId != -1) {
             Toast.makeText(this, "Term added", Toast.LENGTH_SHORT).show();
             Intent resultIntent = new Intent();
+            resultIntent.putExtra("originator", "AddTermActivity");
             resultIntent.putExtra("term", new_term);
             resultIntent.putExtra("fromEdit", editMode);
             int termId = editMode ? new_term.getId() : (int) newRowId;

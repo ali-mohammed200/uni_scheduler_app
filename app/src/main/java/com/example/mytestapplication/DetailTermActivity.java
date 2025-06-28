@@ -52,7 +52,6 @@ public class DetailTermActivity extends AppCompatActivity {
         term = (Term) intent.getSerializableExtra("term");
         termId = term.getId();
         setPageData();
-        loadCourses();
 
         activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -60,13 +59,18 @@ public class DetailTermActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK) {
                         Intent resultData = result.getData();
                         if(resultData != null){
-                            term = (Term) resultData.getSerializableExtra("term");
-                            boolean fromEdit = resultData.getBooleanExtra("fromEdit", false);
-                            termId = resultData.getIntExtra("termId", termId);
-                            setPageData();
-                            Log.d("DetailTermActivity ResultContract", term + " " + termId + " " + fromEdit);
+                            if (resultData.hasExtra("originator")) {
+                                if (resultData.getStringExtra("originator").equals("AddCourseActivity")){
+                                    loadCourses();
+                                } else if (resultData.getStringExtra("originator").equals("AddTermActivity")) {
+                                    term = (Term) resultData.getSerializableExtra("term");
+                                    boolean fromEdit = resultData.getBooleanExtra("fromEdit", false);
+                                    termId = resultData.getIntExtra("termId", termId);
+                                    setPageData();
+                                    Log.d("DetailTermActivity ResultContract", term + " " + termId + " " + fromEdit);
+                                }
+                            }
                         }
-                        loadCourses(); // Reload course list
                     }
                 }
         );
@@ -81,6 +85,7 @@ public class DetailTermActivity extends AppCompatActivity {
         termTitleView.setText("[" + termId + "] " + "Title: " + term.getTitle());
         termStartView.setText("Start: " + term.getStartDate());
         termEndView.setText("End: " + term.getEndDate());
+        loadCourses();
     }
 
     @Override
