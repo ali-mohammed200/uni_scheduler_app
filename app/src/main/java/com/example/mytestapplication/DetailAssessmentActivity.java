@@ -147,6 +147,9 @@ public class DetailAssessmentActivity extends AppCompatActivity {
     }
 
     private void setPageData() {
+        AssessmentDAO assessmentDAO = new AssessmentDAO(this);
+        assessment = assessmentDAO.getAssessmentById(assessment.getId());
+
         textAssessmentTitle.setText("[" + assessment.getId() + "] " + "Title: " + assessment.getTitle());
         assessmentDates.setText(assessment.getStartDate() + " - " + assessment.getEndDate());
         assessmentType.setText("Type: " + assessment.getType());

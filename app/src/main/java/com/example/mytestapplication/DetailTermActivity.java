@@ -97,6 +97,9 @@ public class DetailTermActivity extends AppCompatActivity {
     }
 
     private void setPageData() {
+        TermDAO termDAO = new TermDAO(this);
+        term = termDAO.getTermById(termId);
+
         termTitleView.setText("[" + termId + "] " + "Title: " + term.getTitle());
         termStartView.setText("Start: " + term.getStartDate());
         termEndView.setText("End: " + term.getEndDate());

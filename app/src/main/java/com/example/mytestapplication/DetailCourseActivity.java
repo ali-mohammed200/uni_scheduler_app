@@ -150,6 +150,9 @@ public class DetailCourseActivity extends AppCompatActivity {
     }
 
     private void setPageData() {
+        CourseDAO courseDAO = new CourseDAO(this);
+        course = courseDAO.getCourseById(course.getId());
+
         courseTitleView.setText("[" + course.getId() + "] " + "Title: " + course.getTitle());
         startDateView.setText("Start: " + course.getStartDate());
         endDateView.setText("End: " + course.getEndDate());
