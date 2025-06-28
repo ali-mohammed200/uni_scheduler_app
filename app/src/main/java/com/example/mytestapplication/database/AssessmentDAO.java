@@ -44,6 +44,22 @@ public class AssessmentDAO {
         return assessments;
     }
 
+    public int getAssessmentCountByCourseId(int courseId) {
+        int count = 0;
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM assessments WHERE course_id = ?",
+                new String[]{String.valueOf(courseId)}
+        );
+
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return count;
+    }
+
+
     public Assessment getAssessmentById(int assessmentId) {
         Assessment assessment = new Assessment();
         Cursor cursor = db.query("assessments", null, "id = ?", new String[]{String.valueOf(assessmentId)}, null, null, null);

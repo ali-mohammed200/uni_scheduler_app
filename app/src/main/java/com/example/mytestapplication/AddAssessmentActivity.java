@@ -144,6 +144,14 @@ public class AddAssessmentActivity extends AppCompatActivity {
         Assessment new_assessment;
         dao = new AssessmentDAO(this);
         long newRowId;
+
+        int courseAssessmentsCount = dao.getAssessmentCountByCourseId(courseId);
+        if (courseAssessmentsCount >= 5 && editMode == false){
+            Toast.makeText(this, "Course already has 5 assessments", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         if (editMode){
             new_assessment = new Assessment(assessment.getId(), assessment.getCourseId(), type, title, start, end);
             newRowId = dao.updateAssessment(new_assessment);
@@ -151,6 +159,7 @@ public class AddAssessmentActivity extends AppCompatActivity {
             new_assessment = new Assessment(courseId, type, title, start, end);
             newRowId = dao.insertAssessment(new_assessment);
         }
+
 
         if (newRowId != -1) {
             long oneDay = 24 * 60 * 60 * 1000L;
@@ -235,7 +244,6 @@ public class AddAssessmentActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         try {
-            dao.close();
         } catch (NullPointerException e) {
             Log.d("onDestroy", "NullPointerException - DOA empty");
         }

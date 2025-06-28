@@ -188,9 +188,14 @@ public class DetailCourseActivity extends AppCompatActivity {
     }
 
     public void addAssessment(View view) {
-        Intent addIntent = new Intent(this, AddAssessmentActivity.class);
-        addIntent.putExtra("course", course);
-        activityResultLauncher.launch(addIntent);
+        int courseAssessmentsCount = dao.getAssessmentCountByCourseId(course.getId());
+        if (courseAssessmentsCount >= 5){
+            Toast.makeText(this, "Course already has 5 assessments", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent addIntent = new Intent(this, AddAssessmentActivity.class);
+            addIntent.putExtra("course", course);
+            activityResultLauncher.launch(addIntent);
+        }
     }
 
     public void openNote(View view) {
