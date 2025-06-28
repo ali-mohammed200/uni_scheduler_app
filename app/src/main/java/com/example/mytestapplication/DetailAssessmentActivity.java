@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -197,6 +198,35 @@ public class DetailAssessmentActivity extends AppCompatActivity {
         intent.putExtra("assessment", assessment);
         activityResultLauncher.launch(intent);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail_assessment, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.menu_alerts) {
+            // Handle "Alerts" click
+//            Intent intent = new Intent(this, ManageAlertsActivity.class);
+//            intent.putExtra("assessment", assessment); // pass current assessment
+//            startActivity(intent);
+            return true;
+        } else if (id == R.id.menu_edit) {
+            openEditFormDetailPage(item.getActionView());
+            return true;
+        } else if (id == R.id.menu_delete) {
+            confirmAndDeleteDetailPage(item.getActionView());
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {

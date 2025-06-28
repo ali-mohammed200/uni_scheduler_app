@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytestapplication.adapters.CourseAdapter;
-import com.example.mytestapplication.database.AssessmentDAO;
 import com.example.mytestapplication.database.CourseDAO;
 import com.example.mytestapplication.database.TermDAO;
 import com.example.mytestapplication.models.Course;
@@ -53,39 +53,40 @@ public class DetailTermActivity extends AppCompatActivity {
         termId = term.getId();
         setPageData();
 
-        activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent resultData = result.getData();
-                        if(resultData != null){
-                            if (resultData.hasExtra("originator")) {
-                                if (resultData.getStringExtra("originator").equals("AddCourseActivity")){
-                                    loadCourses();
-                                } else if (resultData.getStringExtra("originator").equals("AddTermActivity")) {
-                                    term = (Term) resultData.getSerializableExtra("term");
-                                    boolean fromEdit = resultData.getBooleanExtra("fromEdit", false);
-                                    termId = resultData.getIntExtra("termId", termId);
-                                    setPageData();
-                                    Log.d("DetailTermActivity ResultContract", term + " " + termId + " " + fromEdit);
-                                }
-                            }
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                Intent resultData = result.getData();
+                if (resultData != null) {
+                    if (resultData.hasExtra("originator")) {
+                        if (resultData.getStringExtra("originator").equals("AddCourseActivity")) {
+                            loadCourses();
+                        } else if (resultData.getStringExtra("originator").equals("AddTermActivity")) {
+                            term = (Term) resultData.getSerializableExtra("term");
+                            boolean fromEdit = resultData.getBooleanExtra("fromEdit", false);
+                            termId = resultData.getIntExtra("termId", termId);
+                            setPageData();
+                            Log.d("DetailTermActivity ResultContract", term + " " + termId + " " + fromEdit);
                         }
                     }
                 }
-        );
-
-        findViewById(R.id.fabAddCourse).setOnClickListener(view -> {
-            Intent addIntent = new Intent(this, AddCourseActivity.class);
-            addIntent.putExtra("term", term); // pre-fill course with this term
-            activityResultLauncher.launch(addIntent);
+            }
         });
+
+        findViewById(R.id.fabAddCourse).setOnClickListener(view -> addCourse(view));
     }
-    private void setPageData(){
+
+    private void setPageData() {
         termTitleView.setText("[" + termId + "] " + "Title: " + term.getTitle());
         termStartView.setText("Start: " + term.getStartDate());
         termEndView.setText("End: " + term.getEndDate());
         loadCourses();
+    }
+
+    private void addCourse(View view) {
+        Intent addIntent = new Intent(this, AddCourseActivity.class);
+        addIntent.putExtra("term", term); // pre-fill course with this term
+        activityResultLauncher.launch(addIntent);
+
     }
 
     @Override
@@ -120,28 +121,23 @@ public class DetailTermActivity extends AppCompatActivity {
     }
 
     public void confirmAndDeleteDetailPage(View view) {
-        new AlertDialog.Builder(this)
-                .setTitle("Delete Term")
-                .setMessage("Are you sure you want to delete this term? Terms with courses will not be deleted")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    // Delete from DB
-                    TermDAO dao = new TermDAO(this);
-                    CourseDAO c_dao = new CourseDAO(this);
+        new AlertDialog.Builder(this).setTitle("Delete Term").setMessage("Are you sure you want to delete this term? Terms with courses will not be deleted").setPositiveButton("Delete", (dialog, which) -> {
+            // Delete from DB
+            TermDAO dao = new TermDAO(this);
+            CourseDAO c_dao = new CourseDAO(this);
 
-                    if (c_dao.countCoursesByTermId(term.getId()) == 0) {
-                        dao.deleteTerm(term.getId());
+            if (c_dao.countCoursesByTermId(term.getId()) == 0) {
+                dao.deleteTerm(term.getId());
 
-                        Intent resultIntent = new Intent();
-                        resultIntent.putExtra("deletedTermId", term.getId());
-                        setResult(RESULT_OK, resultIntent);
-                        finish();
-                    } else {
-                        Toast.makeText(this, "Delete associated courses for this term first", Toast.LENGTH_SHORT).show();
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("deletedTermId", term.getId());
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            } else {
+                Toast.makeText(this, "Delete associated courses for this term first", Toast.LENGTH_SHORT).show();
 
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+            }
+        }).setNegativeButton("Cancel", null).show();
     }
 
 
@@ -150,6 +146,35 @@ public class DetailTermActivity extends AppCompatActivity {
         intent.putExtra("editMode", true);
         intent.putExtra("term", term);
         activityResultLauncher.launch(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail_term, menu);
+
+        MenuItem menuItemAdd = menu.findItem(R.id.menu_add);
+        if (menuItemAdd != null) {
+            menuItemAdd.setTitle("Add Course");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.menu_edit) {
+            openEditFormDetailPage(item.getActionView());
+            return true;
+        } else if (id == R.id.menu_delete) {
+            confirmAndDeleteDetailPage(item.getActionView());
+            return true;
+        } else if (id == R.id.menu_add) {
+            addCourse(item.getActionView());
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

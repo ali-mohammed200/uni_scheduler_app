@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -220,6 +221,42 @@ public class DetailCourseActivity extends AppCompatActivity {
         intent.putExtra("editMode", true);
         intent.putExtra("course", course);
         activityResultLauncher.launch(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail_course, menu);
+
+        MenuItem menuItemAdd = menu.findItem(R.id.menu_add);
+        if (menuItemAdd != null) {
+            menuItemAdd.setTitle("Add Assessment");
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.menu_alerts) {
+            // Handle "Alerts" click
+//            Intent intent = new Intent(this, ManageAlertsActivity.class);
+//            intent.putExtra("assessment", assessment); // pass current assessment
+//            startActivity(intent);
+            return true;
+        } else if (id == R.id.menu_edit) {
+            openEditFormDetailPage(item.getActionView());
+            return true;
+        } else if (id == R.id.menu_delete) {
+            confirmAndDeleteDetailPage(item.getActionView());
+            return true;
+        } else if (id == R.id.menu_add) {
+            addAssessment(item.getActionView());
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
